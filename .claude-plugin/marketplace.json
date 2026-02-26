@@ -10,6 +10,7 @@
   "plugins": [
     {
       "name": "claude-code-for-android",
+      "version": "1.0.1",
       "source": "./",
       "description": "Android code review toolkit with specialized agent and command for comprehensive Kotlin/Java code analysis",
       "author": {
