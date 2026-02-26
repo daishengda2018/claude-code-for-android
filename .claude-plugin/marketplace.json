@@ -1,25 +1,43 @@
 {
   "name": "claude-code-for-android",
-  "displayName": "Android Code Review",
-  "version": "1.0.0",
-  "description": "Android code review toolkit - automated quality, security, and performance checks for Kotlin/Java code",
-  "author": "daishengda2018",
-  "license": "Apache-2.0",
-  "repository": "https://github.com/daishengda2018/claude-code-for-android",
-  "type": "plugin",
-  "categories": ["android", "code-review", "security", "kotlin", "java"],
-  "capabilities": {
-    "commands": ["android-code-review"],
-    "agents": ["android-code-reviewer"]
+  "owner": {
+    "name": "daishengda2018",
+    "email": "daishengda2018@users.noreply.github.com"
   },
-  "install": {
-    "type": "copy",
-    "source": ".",
-    "targets": [
-      {"source": "agents", "dest": ".claude/agents"},
-      {"source": "commands", "dest": ".claude/commands"},
-      {"source": ".claude/plugin-manifest.json", "dest": ".claude/plugin-manifest.json"}
-    ]
+  "metadata": {
+    "description": "Android code review toolkit - automated quality, security, and performance checks for Kotlin/Java code"
   },
-  "minClaudeVersion": "1.0.0"
+  "plugins": [
+    {
+      "name": "claude-code-for-android",
+      "source": "./",
+      "description": "Android code review toolkit with specialized agent and command for comprehensive Kotlin/Java code analysis",
+      "author": {
+        "name": "daishengda2018"
+      },
+      "homepage": "https://github.com/daishengda2018/claude-code-for-android",
+      "repository": "https://github.com/daishengda2018/claude-code-for-android",
+      "license": "Apache-2.0",
+      "keywords": [
+        "android",
+        "kotlin",
+        "java",
+        "code-review",
+        "security",
+        "performance",
+        "quality"
+      ],
+      "category": "code-review",
+      "tags": [
+        "android",
+        "kotlin",
+        "java",
+        "mobile",
+        "code-review",
+        "security",
+        "performance",
+        "testing"
+      ]
+    }
+  ]
 }
