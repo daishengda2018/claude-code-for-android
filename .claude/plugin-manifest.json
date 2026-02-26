@@ -1,0 +1,21 @@
+{
+  "manifestVersion": "1.0",
+  "name": "claude-code-for-android",
+  "version": "1.0.0",
+  "description": "Android code review toolkit - automated quality, security, and performance checks for Kotlin/Java code",
+  "author": "daishengda2018",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/daishengda2018/claude-code-for-android.git"
+  },
+  "capabilities": {
+    "commands": ["android-code-review"],
+    "agents": ["android-code-reviewer"]
+  },
+  "installation": {
+    "type": "marketplace",
+    "minClaudeVersion": "1.0.0"
+  },
+  "categories": ["android", "code-review", "security", "kotlin"]
+}
