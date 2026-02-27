@@ -1,7 +1,7 @@
 {
   "manifestVersion": "1.0",
   "name": "claude-code-for-android",
-  "version": "1.0.1",
+  "version": "2.0.0-alpha",
   "description": "Android code review toolkit - automated quality, security, and performance checks for Kotlin/Java code",
   "author": "daishengda2018",
   "license": "Apache-2.0",

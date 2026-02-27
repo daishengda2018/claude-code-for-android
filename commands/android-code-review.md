@@ -1,7 +1,6 @@
 ---
 name: android-code-review
-description: Android Code Review v2.0 - Progressive rule loading, token budget management, PR support
-version: 2.0.0
+description: Android Code Review v2.0.0-alpha - Progressive rule loading, token budget management, PR support
 type: command
 skill:
   name: android-code-review

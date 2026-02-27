@@ -27,7 +27,7 @@
 
 ```
 1. 修改检测规则
-   └─ 编辑 .claude/agents/android-code-reviewer.md
+   └─ 编辑 agents/android-code-reviewer.md
 
 2. 重启 Claude Code ⚠️
    └─ 必须步骤！让修改生效
@@ -126,7 +126,7 @@ vim test-cases/004-new-rule.kt
 /android-code-review --target file:test-cases/004-new-rule.kt
 
 # 3. 如果没检测到，编辑 plugin
-vim .claude/agents/android-code-reviewer.md
+vim agents/android-code-reviewer.md
 
 # 4. 重启 Claude Code
 
@@ -150,7 +150,7 @@ for file in test-cases/0*.kt; do
 done
 
 # 3. 改进 plugin
-vim .claude/agents/android-code-reviewer.md
+vim agents/android-code-reviewer.md
 
 # 4. 重启 Claude Code
 
@@ -188,7 +188,7 @@ done
 
 ### 错误 1: Plugin 修改后没有生效
 
-**症状：** 修改了 `.claude/agents/android-code-reviewer.md`，但 AI 检测结果没变化。
+**症状：** 修改了 `agents/android-code-reviewer.md`，但 AI 检测结果没变化。
 
 **原因：** Claude Code 启动时加载 plugin，修改后需要重启。
 

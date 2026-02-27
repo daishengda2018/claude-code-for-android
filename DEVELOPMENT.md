@@ -90,7 +90,7 @@ Check if plugin detected the issue:
 
 ### Step 4: Improve Plugin
 
-Edit `.claude/agents/android-code-reviewer.md`:
+Edit `agents/android-code-reviewer.md`:
 
 ```markdown
 ## 🔍 Review Checklist
@@ -209,10 +209,9 @@ Claude Code loads plugins in the following order:
 
 ```bash
 # Check currently loaded plugin
-ls -la .claude/agents/android-code-reviewer.md
+ls -la agents/android-code-reviewer.md
 
-# Compare with user-level version
-ls -la ~/.claude/homunculus/evolved/agents/android-code-reviewer.md
+# Note: agents/ directory is in project root, not .claude/
 ```
 
 ## Test Coverage
@@ -249,11 +248,11 @@ Quit Claude Code and reopen
 
 **A:** Check in project:
 ```bash
-# Should point to project directory
-ls -la .claude/agents/
+# Should show project root agents/
+ls -la agents/android-code-reviewer.md
 
-# Not user directory
-ls -la ~/.claude/homunculus/evolved/agents/
+# Compare with user-level version
+ls -la ~/.claude/agents/android-code-reviewer.md
 ```
 
 ### Q: How to release after tests pass?
@@ -322,7 +321,7 @@ In Claude Code, run:
 
 ### 3. Modify Plugin
 
-Add to `.claude/agents/android-code-reviewer.md`:
+Add to `agents/android-code-reviewer.md`:
 
 ```markdown
 ### AsyncTask Memory Leak Checks

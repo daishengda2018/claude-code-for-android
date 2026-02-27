@@ -92,7 +92,7 @@ In Claude Code, run directly:
 ```
 
 ### 3. Modify Plugin Detection Rules
-Edit `.claude/agents/android-code-reviewer.md`:
+Edit `agents/android-code-reviewer.md` or `skills/android-code-review/SKILL.md`:
 - Add new patterns to Review Checklist sections
 - Update code examples
 - **⚠️ Restart Claude Code after changes**

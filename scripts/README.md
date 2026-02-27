@@ -128,7 +128,7 @@ test-android/bugs-archive/
 # /android-code-review --target file:test-cases/001-security-hardcoded-secrets.kt
 
 # 3. 查看检测结果，如果不通过：
-#    - 编辑 .claude/agents/android-code-reviewer.md
+#    - 编辑 agents/android-code-reviewer.md
 #    - 重启 Claude Code
 #    - 重新运行步骤 2
 

@@ -1,8 +1,7 @@
 ---
 name: android-code-review
-description: Android Code Review v2.0 with progressive rule loading and token budget management
-version: 2.0.0
-last_updated: 2025-02-27
+description: Android Code Review v2.0.0-alpha with progressive rule loading and token budget management
+last_updated: 2026-02-27
 ---
 
 # Android Code Review v2.0 - Orchestration Layer

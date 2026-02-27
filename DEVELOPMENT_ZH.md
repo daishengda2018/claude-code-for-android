@@ -90,7 +90,7 @@ class BadExample {
 
 ### Step 4: 改进 Plugin
 
-编辑 `.claude/agents/android-code-reviewer.md`：
+编辑 `agents/android-code-reviewer.md`：
 
 ```markdown
 ## 🔍 Review Checklist
@@ -212,7 +212,7 @@ Claude Code 按以下顺序加载 plugin：
 
 ```bash
 # 检查当前加载的 plugin
-ls -la .claude/agents/android-code-reviewer.md
+ls -la agents/android-code-reviewer.md
 
 # 对比用户级版本
 ls -la ~/.claude/homunculus/evolved/agents/android-code-reviewer.md
@@ -325,7 +325,7 @@ class AsyncTaskLeak : Activity() {
 
 ### 3. 修改 Plugin
 
-在 `.claude/agents/android-code-reviewer.md` 添加：
+在 `agents/android-code-reviewer.md` 添加：
 
 ```markdown
 ### AsyncTask Memory Leak Checks

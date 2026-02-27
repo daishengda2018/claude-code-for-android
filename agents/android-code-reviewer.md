@@ -18,7 +18,7 @@ When invoked:
    - Map to architecture layers (UI/Domain/Data/DI)
    - Identify Android components (Activities, Fragments, ViewModels, Composables)
 3. **Read surrounding code** — Don't review in isolation. Read full files for dependencies and lifecycle.
-4. **Load rules progressively** — Based on `--severity`, load only relevant checklists from `references/`:
+4. **Load rules progressively** — Based on `--severity`, load only relevant checklists from `skills/android-code-review/references/`:
    - `critical` → Security only
    - `high` → Security + Quality + Architecture + Jetpack
    - `medium` → Above + Performance
@@ -32,7 +32,7 @@ Load rule references based on severity to save tokens:
 
 | Severity | Rule Files | Tokens |
 |----------|-----------|--------|
-| `critical` | `references/sec-001-to-010-security.md` | ~2,500 |
+| `critical` | `skills/android-code-review/references/sec-001-to-010-security.md` | ~2,500 |
 | `high` | + quality + architecture + jetpack | ~12,000 |
 | `medium` | + performance | ~14,200 |
 | `all` | + practices | ~16,400 |
@@ -55,7 +55,7 @@ Load rule references based on severity to save tokens:
 - Permission abuse → Request at runtime, justify in manifest
 - Data leakage → No logging sensitive data
 - Outdated dependencies → Check for known vulnerabilities
-- **Reference**: `references/sec-001-to-010-security.md`
+- **Reference**: `skills/android-code-review/references/sec-001-to-010-security.md`
 
 ### Code Quality (HIGH)
 - Memory leaks → No static Context/View references, cleanup observers
@@ -66,7 +66,7 @@ Load rule references based on severity to save tokens:
 - Unsafe `!!` operator → Use safe calls or explicit validation
 - Dead code → Remove commented code, unused imports
 - Debug code → Remove Log.d statements, track TODOs
-- **Reference**: `references/qual-001-to-010-quality.md`
+- **Reference**: `skills/android-code-review/references/qual-001-to-010-quality.md`
 
 ### Architecture (HIGH)
 - Lifecycle violations → No long operations in onCreate/onResume
@@ -75,7 +75,7 @@ Load rule references based on severity to save tokens:
 - Resource hardcoding → Use string/dimension/color resources
 - Main thread blocking → No network/database on main thread
 - Deprecated APIs → Migrate from onActivityResult, etc.
-- **Reference**: `references/arch-001-to-009-architecture.md`
+- **Reference**: `skills/android-code-review/references/arch-001-to-009-architecture.md`
 
 ### Jetpack/Kotlin (HIGH)
 - Coroutine misconfiguration → Use correct dispatchers, scopes
@@ -84,7 +84,7 @@ Load rule references based on severity to save tokens:
 - Hilt errors → Add @Inject constructors, correct qualifiers
 - Compose anti-patterns → Use stable keys, avoid recomposition issues
 - Navigation issues → Don't pass large data via bundle
-- **Reference**: `references/jetp-001-to-008-jetpack.md`
+- **Reference**: `skills/android-code-review/references/jetp-001-to-008-jetpack.md`
 
 ### Performance (MEDIUM)
 - ANR risks → No main thread blocking
@@ -93,7 +93,7 @@ Load rule references based on severity to save tokens:
 - Startup bottlenecks → Lazy initialization, Application.onCreate optimization
 - Resource bloat → Remove unused assets, compress drawables
 - SharedPreferences overhead → Use DataStore or migrate to room
-- **Reference**: `references/perf-001-to-008-performance.md`
+- **Reference**: `skills/android-code-review/references/perf-001-to-008-performance.md`
 
 ### Best Practices (LOW)
 - TODO without tracking → Reference issue numbers
@@ -102,7 +102,7 @@ Load rule references based on severity to save tokens:
 - Magic numbers → Extract to constants
 - Inconsistent formatting → Follow project style
 - Missing accessibility → Add contentDescription, proper focus order
-- **Reference**: `references/prac-001-to-008-practices.md`
+- **Reference**: `skills/android-code-review/references/prac-001-to-008-practices.md`
 
 ## Understanding Commit Context
 
