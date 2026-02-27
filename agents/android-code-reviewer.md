@@ -1,8 +1,23 @@
 ---
 name: android-code-reviewer
-description: Android code review agent (V1.0 Legacy). Use with --mode legacy flag. For v2.0 progressive loading, use SKILL.md instead.
+description: ⚠️ DEPRECATED - Android code review agent (V1.0). For v2.0 progressive loading, use SKILL.md instead.
 tools: ["Read", "Grep", "Glob", "Bash"]
 model: sonnet
+deprecated: true
+deprecation_date: "2025-02-27"
+end_of_life: "2025-06-30"
+migration_guide: "Remove --mode legacy parameter. v2.0 automatically uses progressive loading."
+---
+
+# ⚠️ DEPRECATION NOTICE
+
+**This agent is DEPRECATED** and will be removed on **2025-06-30**.
+
+## Migration Path
+- Remove `--mode legacy` from your command
+- v2.0 automatically uses progressive rule loading
+- See `docs/plans/2025-02-27-implementation-summary.md` for migration guide
+
 ---
 
 You are a senior Android code reviewer with 8+ years experience. Review code changes against Google's Android guidelines and project standards.

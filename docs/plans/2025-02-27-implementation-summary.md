@@ -199,10 +199,53 @@ android-code-review --target staged --output-format json
 - 更新开发指南（Task 22）
 
 ### 下一步
-1. 在实际项目中测试 v2.0
-2. 收集反馈和性能数据
-3. 与 V1.0 对比验证
-4. 逐步废弃 V1.0
+1. ✅ 在实际项目中测试 v2.0
+2. ✅ 收集反馈和性能数据
+3. ✅ 与 V1.0 对比验证
+4. ✅ **废弃 V1.0（已完成）**
+
+---
+
+## ⚠️ V1.0 废弃计划
+
+### 废弃时间线
+
+| 日期 | 里程碑 | 状态 |
+|------|--------|------|
+| 2025-02-27 | 宣布废弃 | ✅ 完成 |
+| 2025-03-31 | 停止新功能 | 进行中 |
+| 2025-05-31 | 仅安全修复 | 待执行 |
+| 2025-06-30 | 完全移除 | 待执行 |
+
+### 已完成的废弃步骤
+
+- ✅ 从命令移除 `--mode legacy` 参数
+- ✅ 在 agent 添加废弃警告
+- ✅ 更新所有文档移除 legacy 引用
+- ✅ 设置 EOL 日期 (2025-06-30)
+
+### 迁移影响
+
+**旧命令** (已废弃):
+```bash
+android-code-review --target staged --mode legacy
+```
+
+**新命令** (v2.0):
+```bash
+# 自动使用渐进式加载，无需指定模式
+android-code-review --target staged --severity critical
+```
+
+### 兼容性
+
+| 场景 | V1.0 | v2.0 |
+|------|------|------|
+| 安全审查 | `--mode legacy` | `--severity critical` |
+| 完整审查 | `--mode legacy` | 默认 `--mode normal` |
+| 快速扫描 | 不支持 | `--mode light` |
+
+**V1.0 代理文件将在 2025-06-30 后删除**: `agents/android-code-reviewer.md`
 
 ---
 
@@ -347,13 +390,14 @@ android-code-review --target file:app/src/performance-critical/ \
 # 自动过滤: 仅报告 PERF-* 类别问题
 ```
 
-### 场景 5: Legacy 代码迁移
+### 场景 5: 旧代码迁移（已废弃 V1.0）
 
 ```bash
-# 使用 legacy 模式保持向后兼容
-android-code-review --target file:legacy/ --mode legacy
+# ⚠️ V1.0 已废弃，直接使用 v2.0
+android-code-review --target file:legacy/ --severity medium
 
-# 内部实现: 调用 agents/android-code-reviewer.md (V1.0)
+# v2.0 自动使用渐进式加载，无需指定模式
+# 内部实现: 使用 SKILL.md v2.0 编排层
 ```
 
 ---
@@ -387,51 +431,67 @@ android-code-review --target file:legacy/ --mode legacy
 
 ---
 
-## 🔄 迁移指南: V1.0 → v2.0
+## 🔄 V1.0 废弃说明
 
-### 步骤 1: 验证环境
+### ⚠️ V1.0 已废弃 (2025-02-27)
+
+**V1.0 Agent 已正式废弃**，请直接使用 v2.0：
 
 ```bash
-# 1. 确认 SKILL.md 存在
-ls -la .claude/SKILL.md
+# ❌ 已废弃 - V1.0
+android-code-review --target staged --mode legacy
 
-# 2. 验证规则元数据
-cat rules/rule-metadata.yaml | head -20
-
-# 3. 检查当前版本
-grep "version:" .claude/SKILL.md
-# 预期输出: version: 2.0.0
+# ✅ 使用 v2.0（默认）
+android-code-review --target staged --severity critical
 ```
 
-### 步骤 2: 渐进式迁移
+### 废弃时间线
 
-**阶段 1: 并行运行（1-2 周）**
+| 日期 | 事件 |
+|------|------|
+| 2025-02-27 | 宣布废弃，停止 `--mode legacy` 参数 |
+| 2025-03-31 | 停止 V1.0 新功能开发 |
+| 2025-05-31 | 仅安全修复 |
+| 2025-06-30 | 完全移除 `agents/android-code-reviewer.md` |
+
+### 迁移对照表
+
+| V1.0 命令 | v2.0 命令 | Token 减少 |
+|-----------|-----------|------------|
+| `--mode legacy` | 默认（无需指定） | - |
+| `--severity all` | `--severity all` | - |
+| - | `--severity critical` | **-84%** |
+| - | `--severity high` | **-35%** |
+| - | `--mode light` | **-30%** |
+
+### 快速迁移
+
+**1. 移除 `--mode legacy` 参数**
 ```bash
-# 继续使用 V1.0 进行日常审查
-android-code-review --target staged  # 默认 legacy 模式
+# Before
+android-code-review --target staged --mode legacy
 
-# 同时测试 v2.0
-android-code-review --target staged --mode normal --severity high
+# After
+android-code-review --target staged
 ```
 
-**阶段 2: 对比验证（1 周）**
+**2. 利用严重等级过滤**
 ```bash
-# 对比同一代码的审查结果
-android-code-review --target commit:abc123 --mode legacy > v1-results.md
-android-code-review --target commit:abc123 --mode normal > v2-results.md
+# 安全关键（最快）
+android-code-review --target staged --severity critical
 
-# 手动对比差异
-diff v1-results.md v2-results.md
+# 高严重等级
+android-code-review --target staged --severity high
 ```
 
-**阶段 3: 正式切换**
+**3. 使用 Light 模式（大项目）**
 ```bash
-# 更新 CI/CD 脚本，移除 --mode legacy
-# 更新文档，移除 V1.0 引用
-# 标记 V1.0 为 deprecated
+android-code-review --target all --mode light
 ```
 
-### 步骤 3: 配置优化
+---
+
+## ⚙️ 配置优化
 
 **创建项目特定配置**:
 ```yaml
@@ -534,24 +594,25 @@ import json
 }
 ```
 
-### 问题 4: Legacy 模式不工作
+### 问题 4: --mode legacy 参数不工作
 
 **症状**:
 ```
-Error: Cannot find V1.0 agent
+Error: --mode legacy is deprecated. Use --mode normal instead.
 ```
+
+**原因**: V1.0 已于 2025-02-27 正式废弃。
 
 **解决方案**:
 ```bash
-# 1. 确认 V1.0 agent 文件存在
-ls -la .claude/agents/android-code-reviewer.md
+# ❌ 已废弃
+android-code-review --target staged --mode legacy
 
-# 2. 如果已删除，从 git 历史恢复
-git log --all --full-history -- .claude/agents/android-code-reviewer.md
-git checkout <sha-before-deletion> -- .claude/agents/android-code-reviewer.md
+# ✅ 使用 v2.0（默认为 normal 模式）
+android-code-review --target staged
 
-# 3. 或者停止使用 legacy 模式
-# 移除 --mode legacy 参数
+# 或指定严重等级（推荐）
+android-code-review --target staged --severity critical
 ```
 
 ---

@@ -24,8 +24,9 @@ parameters:
     type: string
     required: false
     default: "normal"
-    description: "light (0.7x tokens)|normal|legacy (V1.0 agent)"
-    enum: ["light", "normal", "legacy"]
+    description: "light (0.7x tokens)|normal"
+    enum: ["light", "normal"]
+    deprecated: "legacy mode removed, use normal instead"
 
   - name: output-format
     type: string
@@ -90,9 +91,6 @@ android-code-review --target file:app/src/core/ --mode light --severity medium
 # With project-specific guidelines
 android-code-review --target staged --project-guidelines ./ANDROID.md
 
-# Legacy V1.0 compatibility
-android-code-review --target commit:abc123 --mode legacy
-
 # CI/CD quality gate
 android-code-review --target ${{ github.sha }} --severity high --output-format json > review.json
 ```
@@ -123,4 +121,12 @@ android-code-review --target ${{ github.sha }} --severity high --output-format j
 - No changes: "No code changes detected"
 - Invalid target: "Invalid target. Use: staged|all|commit:<hash>|file:<path>|pr:<number>"
 - Token budget exceeded: Auto-degrade or split review
-- Legacy mode not found: Error message with recovery steps
+- Invalid mode: "Error: --mode legacy is deprecated. Use --mode normal instead."
+
+## Deprecation Notice
+
+**V1.0 Agent (Legacy Mode) - DEPRECATED**
+- Deprecated: 2025-02-27
+- End of Life: 2025-06-30
+- Action: Migrate to v2.0 by removing `--mode legacy` parameter
+- Migration guide: See `docs/plans/2025-02-27-implementation-summary.md`
