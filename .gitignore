@@ -35,3 +35,13 @@ google-services.json
 
 # Claude Code local settings
 .claude/settings.local.json
+
+# Test Android project specific
+test-android/.gradle/
+test-android/build/
+test-android/app/build/
+test-android/local.properties
+test-android/.idea/
+test-android/*.iml
+test-android/.DS_Store
+test-android/captures/

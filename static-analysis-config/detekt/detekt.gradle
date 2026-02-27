@@ -1,0 +1,28 @@
+// kotlin Code Style
+// https://detekt.dev/docs/1.23.8/gettingstarted/gradle
+
+apply plugin: 'io.gitlab.arturbosch.detekt'
+
+detekt {
+    // failFast = true     // fail build on any finding
+    config = rootProject.files("config/detekt/detekt.yml") // 规则配置文件
+    buildUponDefaultConfig = true
+
+    reports {
+        html.enabled = true // observe findings in your browser with structure and code snippets
+        xml.enabled = false // checkstyle like format mainly for integrations like Jenkins
+        txt.enabled = true  // similar to the console output, contains issue signature to manually edit baseline files
+    }
+}
+
+tasks.named("detekt").configure {
+    reports {
+        xml.required.set(false)
+        html.required.set(true)
+        sarif.required.set(false)
+        md.required.set(false)
+    }
+}
+
+// Groovy dsl
+tasks.detekt.jvmTarget = "1.8"
