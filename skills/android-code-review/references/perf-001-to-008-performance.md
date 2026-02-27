@@ -1,9 +1,6 @@
-# PERF-001 到 PERF-008: 性能优化规则检查清单
+# Performance Rules (PERF-001 to PERF-008)
 
-> **规则ID范围**: PERF-001 到 PERF-008
-> **严重等级**: P2 (MEDIUM)
-> **分类**: Performance (性能优化)
-> **Token估算**: 2400
+**Severity:** P2 (MEDIUM) | **Category:** Performance | **Tokens:** ~2,400
 
 ---
 

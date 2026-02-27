@@ -1,9 +1,6 @@
-# PRAC-001 到 PRAC-008: 最佳实践规则检查清单
+# Best Practices Rules (PRAC-001 to PRAC-008)
 
-> **规则ID范围**: PRAC-001 到 PRAC-008
-> **严重等级**: P3 (LOW)
-> **分类**: Best Practices (最佳实践)
-> **Token估算**: 2000
+**Severity:** P3 (LOW) | **Category:** Best Practices | **Tokens:** ~2,000
 
 ---
 

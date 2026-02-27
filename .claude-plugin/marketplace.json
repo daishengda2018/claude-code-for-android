@@ -28,17 +28,7 @@
         "performance",
         "quality"
       ],
-      "category": "code-review",
-      "tags": [
-        "android",
-        "kotlin",
-        "java",
-        "mobile",
-        "code-review",
-        "security",
-        "performance",
-        "testing"
-      ]
+      "category": "code-review"
     }
   ]
 }

@@ -1,23 +1,10 @@
-# ARCH-001 到 ARCH-009: Android 架构规则检查清单
+# Architecture Rules (ARCH-001 to ARCH-009)
 
-> **规则ID范围**: ARCH-001 到 ARCH-009
-> **严重等级**: P1 (HIGH)
-> **分类**: Architecture (Android 架构)
-> **Token估算**: 2800
+**Severity:** P1 (HIGH) | **Category:** Architecture | **Tokens:** ~2,800
 
----
+## Rules Overview
 
-## 规则概览
-
-- ARCH-001: 生命周期违规
-- ARCH-002: ViewModel 误用
-- ARCH-003: Fragment 反模式
-- ARCH-004: 资源硬编码
-- ARCH-005: 主线程阻塞
-- ARCH-006: 弃用 API 使用
-- ARCH-007: 权限处理缺陷
-- ARCH-008: 配置变更问题
-- ARCH-009: View binding 违规
+Lifecycle violations, ViewModel misuse, Fragment anti-patterns, main thread blocking.
 
 ---
 

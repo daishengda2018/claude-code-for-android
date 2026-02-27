@@ -1,26 +1,10 @@
-# QUAL-001 到 QUAL-010: 代码质量规则检查清单
+# Code Quality Rules (QUAL-001 to QUAL-010)
 
-> **规则ID范围**: QUAL-001 到 QUAL-010
-> **严重等级**: P1 (HIGH)
-> **分类**: Code Quality (代码质量)
-> **Token估算**: 3200
+**Severity:** P1 (HIGH) | **Category:** Code Quality | **Tokens:** ~3,200
 
----
+## Rules Overview
 
-## 规则概览
-
-本检查清单包含所有 P1 级别的代码质量审查规则，涵盖：
-
-- QUAL-001: 超长函数检测
-- QUAL-002: 超长文件检测
-- QUAL-003: 深度嵌套检测
-- QUAL-004: 错误处理缺失
-- QUAL-005: 内存泄漏检测
-- QUAL-006: 调试代码残留
-- QUAL-007: 测试覆盖不足
-- QUAL-008: 死代码检测
-- QUAL-009: 不安全空值访问
-- QUAL-010: 代码可读性
+Long functions, deep nesting, error handling, memory leaks, dead code.
 
 ---
 

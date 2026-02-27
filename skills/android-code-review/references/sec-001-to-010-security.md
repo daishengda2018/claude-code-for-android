@@ -1,26 +1,19 @@
-# SEC-001 到 SEC-010: 安全规则检查清单
+# Security Rules (SEC-001 to SEC-010)
 
-> **规则ID范围**: SEC-001 到 SEC-010
-> **严重等级**: P0 (CRITICAL)
-> **分类**: Security (安全审查)
-> **Token估算**: 2500
+**Severity:** P0 (CRITICAL) | **Category:** Security | **Tokens:** ~2,500
 
----
+## Rules Overview
 
-## 规则概览
-
-本检查清单包含所有 P0 级别的安全审查规则，涵盖：
-
-- SEC-001: 硬编码凭证检测
-- SEC-002: 不安全数据存储
-- SEC-003: 不安全 Intent 处理
-- SEC-004: WebView 安全漏洞
-- SEC-005: 明文通信违规
-- SEC-006: 权限滥用
-- SEC-007: 敏感数据泄露
-- SEC-008: 不安全依赖
-- SEC-009: SSL/TLS 验证缺陷
-- SEC-010: 加密算法缺陷
+- SEC-001: Hardcoded credentials
+- SEC-002: Insecure data storage
+- SEC-003: Unsafe Intent handling
+- SEC-004: WebView vulnerabilities
+- SEC-005: Cleartext traffic
+- SEC-006: Permission abuse
+- SEC-007: Sensitive data leakage
+- SEC-008: Outdated dependencies
+- SEC-009: SSL/TLS validation
+- SEC-010: Weak cryptography
 
 ---
 

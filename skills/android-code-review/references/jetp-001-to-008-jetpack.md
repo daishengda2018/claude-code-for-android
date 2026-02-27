@@ -1,9 +1,6 @@
-# JETP-001 到 JETP-008: Jetpack/Kotlin 规则检查清单
+# Jetpack/Kotlin Rules (JETP-001 to JETP-008)
 
-> **规则ID范围**: JETP-001 到 JETP-008
-> **严重等级**: P1 (HIGH)
-> **分类**: Jetpack/Kotlin Patterns
-> **Token估算**: 3500
+**Severity:** P1 (HIGH) | **Category:** Jetpack/Kotlin | **Tokens:** ~3,500
 
 ---
 
