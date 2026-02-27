@@ -2,6 +2,13 @@
 
 Plugin 开发和测试的自动化工具集。
 
+> **注意：** 这些脚本专注于环境准备和验证，不包含 AI code review 的调用。
+>
+> 要运行 AI code review，请在 Claude Code 中直接使用命令：
+> ```
+> /android-code-review --target file:<path-to-file>
+> ```
+
 ## 📋 Scripts Overview
 
 ### verify-isolation.sh
@@ -23,8 +30,6 @@ Plugin 开发和测试的自动化工具集。
 ./scripts/verify-isolation.sh --quiet
 # 只返回退出码，不输出（用于脚本集成）
 ```
-
-**自动调用：** `run-review.sh`, `verify-plugin.sh`
 
 ---
 
@@ -54,53 +59,6 @@ AI Review → 修复代码 → verify-build.sh → 编译成功 ✅
 - 自动检测 Gradle wrapper
 - 支持系统 gradle 作为后备
 - 清晰的成功/失败消息
-
----
-
-### run-review.sh
-准备测试环境并提示运行命令。
-
-**用途：** 快速设置和运行单个测试用例的 review。
-
-**使用：**
-```bash
-./scripts/run-review.sh <test-case-id>
-```
-
-**示例：**
-```bash
-./scripts/run-review.sh 001
-./scripts/run-review.sh 002-handler-leak
-```
-
-**工作流程：**
-1. 自动验证 plugin 隔离
-2. 查找指定的测试文件
-3. 打印运行提示
-4. 用户在 Claude Code 中运行提示的命令
-
-**自动验证：** 调用 `verify-isolation.sh`
-
----
-
-### verify-plugin.sh
-批量验证所有测试用例。
-
-**用途：** 回归测试，确保所有检测规则正常工作。
-
-**使用：**
-```bash
-./scripts/verify-plugin.sh
-```
-
-**工作流程：**
-1. 自动验证 plugin 隔离
-2. 遍历 `test-cases/` 中的所有测试文件
-3. 对每个文件提示用户运行 review
-4. 用户确认是否通过
-5. 统计通过/失败数量
-
-**自动验证：** 调用 `verify-isolation.sh`
 
 ---
 
@@ -158,66 +116,40 @@ test-android/bugs-archive/
 
 ---
 
-## 🔄 典型工作流
+## 🔄 手动测试工作流
 
-### 开发新检测规则
+### 单个测试用例测试
 
 ```bash
-# 1. 编写测试用例
-# 编辑 test-cases/004-new-rule.kt
+# 1. 验证 plugin 隔离（可选，脚本会自动检查）
+./scripts/verify-isolation.sh
 
-# 2. 运行 review
-./scripts/run-review.sh 004
-# → 脚本验证隔离 → 提示运行命令
-# → 在 Claude Code 中运行命令
+# 2. 在 Claude Code 中运行 AI review
+# /android-code-review --target file:test-cases/001-security-hardcoded-secrets.kt
 
-# 3. 修改 plugin
-# 编辑 .claude/agents/android-code-reviewer.md
+# 3. 查看检测结果，如果不通过：
+#    - 编辑 .claude/agents/android-code-reviewer.md
+#    - 重启 Claude Code
+#    - 重新运行步骤 2
 
-# 4. 重启 Claude Code
-# (让修改生效)
-
-# 5. 重新验证
-./scripts/run-review.sh 004
-
-# 6. 真实环境测试（可选）
+# 4. 真实环境测试（可选）
 cd test-android/
-# 编写 bugs/ 中的代码
-/android-code-review --target file:...
+# 编写/修改 bugs/ 中的代码
+# /android-code-review --target file:app/src/main/java/com/test/bugs/...
 
-# 7. 验证编译
+# 5. 验证编译
 cd ../
 ./scripts/verify-build.sh
-
-# 8. 批量验证
-./scripts/verify-plugin.sh
-
-# 9. 发布
-./scripts/publish-plugin.sh
 ```
 
-### 日常测试
+### 批量回归测试
 
 ```bash
-# 快速验证单个规则
-./scripts/run-review.sh 001
-
-# 验证所有规则
-./scripts/verify-plugin.sh
-
-# 验证项目编译
-./scripts/verify-build.sh
-```
-
-### 归档旧测试
-
-```bash
-# 测试用例已验证，不再需要日常测试
-./scripts/archive-test.sh 001-npe
-
-# 如需恢复用于回归测试
-mkdir -p test-android/bugs
-cp -r test-android/bugs-archive/2026-02/001-npe test-android/bugs/
+# 手动对每个 test-cases/*.kt 运行 review
+for file in test-cases/*.kt; do
+    echo "Testing: $file"
+    # /android-code-review --target file:$file
+done
 ```
 
 ---
@@ -225,12 +157,6 @@ cp -r test-android/bugs-archive/2026-02/001-npe test-android/bugs/
 ## 🛠️ 脚本依赖关系
 
 ```
-run-review.sh
-  └─> verify-isolation.sh (自动)
-
-verify-plugin.sh
-  └─> verify-isolation.sh (自动)
-
 verify-build.sh
   └─> (独立运行)
 
@@ -239,6 +165,9 @@ archive-test.sh
 
 publish-plugin.sh
   └─> (独立运行)
+
+verify-isolation.sh
+  └─> (独立运行，或被其他脚本调用)
 ```
 
 ---
@@ -289,18 +218,6 @@ rm -rf test-android/.claude/
 ```bash
 cd test-android/
 ./gradlew assembleDebug --stacktrace
-```
-
----
-
-### run-review.sh 找不到文件
-
-**错误：** `Test case not found: 999`
-
-**解决：**
-```bash
-# 查看可用的测试用例
-ls test-cases/
 ```
 
 ---

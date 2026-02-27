@@ -27,8 +27,6 @@ claude-code-for-android/
 ├── scripts/                    # 自动化脚本
 │   ├── verify-isolation.sh    # 验证 plugin 隔离 ✨
 │   ├── verify-build.sh        # 验证编译 ✨
-│   ├── run-review.sh          # 运行代码审查
-│   ├── verify-plugin.sh       # 验证 plugin 功能
 │   ├── archive-test.sh        # 归档测试用例 ✨
 │   └── publish-plugin.sh      # 发布新版本
 │
@@ -76,18 +74,12 @@ class BadExample {
 
 ### Step 2: 运行代码审查
 
-有两种方式：
-
-**方式 A: 使用脚本（推荐）**
-```bash
-./scripts/run-review.sh 004-my-test
-```
-
-**方式 B: 手动运行**
-在 Claude Code 中运行：
+在 Claude Code 中直接运行 review 命令：
 ```
 /android-code-review --target file:test-cases/004-my-test.kt
 ```
+
+插件会分析文件并报告检测到的问题。
 
 ### Step 3: 分析结果
 
@@ -112,12 +104,17 @@ class BadExample {
 
 ### Step 5: 验证改进
 
-运行验证脚本：
+手动验证所有测试用例以确保改进有效：
+
 ```bash
-./scripts/verify-plugin.sh
+# 逐个测试每个用例
+for file in test-cases/*.kt; do
+    echo "Testing: $file"
+    # /android-code-review --target file:$file
+done
 ```
 
-脚本会逐个测试所有用例，确认：
+验证：
 - [ ] 所有问题都被检测到
 - [ ] 严重程度正确
 - [ ] 修复建议有用
@@ -185,9 +182,7 @@ Claude Code 按以下顺序加载 plugin：
 ```
 
 **自动验证：**
-- `run-review.sh` 开头自动验证
-- `verify-plugin.sh` 开头自动验证
-- `verify-build.sh` 不会验证（只验证编译）
+无自动验证，需要在测试前手动运行 `verify-isolation.sh`
 
 **关键点：**
 - ✅ 项目级 plugin 会覆盖用户级
@@ -200,18 +195,18 @@ Claude Code 按以下顺序加载 plugin：
 #### **Layer 1: 独立测试文件**（快速验证）
 - 位置：`test-cases/*.kt`
 - 用途：快速验证单个检测规则
-- 命令：`./scripts/run-review.sh <test-id>`
+- 命令：`/android-code-review --target file:test-cases/<file>.kt`
 
 #### **Layer 2: 真实 Android 项目**（深度测试） ✨
 - 位置：`test-android/`
 - 用途：在真实项目环境中测试
-- 命令：`cd test-android/ && /android-code-review --target file:...`
+- 命令：`cd test-android/ && /android-code-review --target file:app/src/main/java/com/test/bugs/...`
 - 编译验证：`./scripts/verify-build.sh`
 
 #### **Layer 3: 批量回归测试**
 - 位置：`test-cases/*.kt`（全部）
-- 用途：验证所有检测规则
-- 命令：`./scripts/verify-plugin.sh`
+- 用途：验证所有检测规则仍然有效
+- 方法：手动对每个测试文件运行 review
 
 ### 验证隔离
 
@@ -323,8 +318,9 @@ class AsyncTaskLeak : Activity() {
 
 ### 2. 运行审查
 
-```bash
-./scripts/run-review.sh 004-async-task-leak
+在 Claude Code 中运行：
+```
+/android-code-review --target file:test-cases/004-async-task-leak.kt
 ```
 
 ### 3. 修改 Plugin
@@ -358,8 +354,11 @@ class SafeActivity : Activity() {
 
 ### 4. 验证
 
-```bash
-./scripts/verify-plugin.sh
+运行所有测试用例的 review 来验证：
+```
+/android-code-review --target file:test-cases/001-*.kt
+/android-code-review --target file:test-cases/002-*.kt
+# ... etc
 ```
 
 ### 5. 发布
@@ -371,8 +370,9 @@ class SafeActivity : Activity() {
 ## 📞 获取帮助
 
 - 📖 查看测试用例: `test-cases/`
-- 🔧 运行测试: `scripts/run-review.sh`
-- ✅ 验证功能: `scripts/verify-plugin.sh`
+- 🔧 运行测试: `/android-code-review --target file:<path>`
+- ✅ 验证隔离: `scripts/verify-isolation.sh`
+- 🔨 验证编译: `scripts/verify-build.sh`
 - 🚀 发布更新: `scripts/publish-plugin.sh`
 
 ---

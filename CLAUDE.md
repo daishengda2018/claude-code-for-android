@@ -42,7 +42,7 @@ Scripts `run-review.sh` and `verify-plugin.sh` auto-verify isolation on startup.
 ### Tier 1: Standalone Files (Quick Verification)
 - **Location:** `test-cases/*.kt`
 - **Purpose:** Fast verification of single detection rules
-- **Usage:** `./scripts/run-review.sh <test-id>`
+- **Usage:** `/android-code-review --target file:test-cases/<file>.kt`
 
 ### Tier 2: Real Android Project (Deep Testing)
 - **Location:** `test-android/`
@@ -58,7 +58,7 @@ Scripts `run-review.sh` and `verify-plugin.sh` auto-verify isolation on startup.
 ### Tier 3: Batch Regression Testing
 - **Location:** All `test-cases/*.kt` files
 - **Purpose:** Verify all detection rules still work
-- **Usage:** `./scripts/verify-plugin.sh`
+- **Method:** Manually run review on each test file
 
 ## Build Verification (Reduce AI Token Usage)
 
@@ -85,9 +85,10 @@ class BadExample {
 }
 ```
 
-### 2. Run Quick Verification
-```bash
-./scripts/run-review.sh 004-my-test
+### 2. Run AI Review
+In Claude Code, run directly:
+```
+/android-code-review --target file:test-cases/004-my-test.kt
 ```
 
 ### 3. Modify Plugin Detection Rules
@@ -106,8 +107,11 @@ cd ../
 ```
 
 ### 5. Batch Verification
+Manually run review on all test cases:
 ```bash
-./scripts/verify-plugin.sh
+for file in test-cases/*.kt; do
+    /android-code-review --target file:$file
+done
 ```
 
 ### 6. Release
@@ -142,8 +146,6 @@ claude-code-for-android/
 ├── scripts/                          # Automation tools
 │   ├── verify-isolation.sh           # Verify test-android/.claude/ is empty
 │   ├── verify-build.sh               # Compile test-android/ project
-│   ├── run-review.sh                 # Quick single-test review
-│   ├── verify-plugin.sh              # Batch regression testing
 │   ├── archive-test.sh               # Archive verified test cases
 │   └── publish-plugin.sh             # Release new version
 │

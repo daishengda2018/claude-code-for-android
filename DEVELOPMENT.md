@@ -27,8 +27,6 @@ claude-code-for-android/
 ├── scripts/                    # Automation scripts
 │   ├── verify-isolation.sh    # Verify plugin isolation ✨
 │   ├── verify-build.sh        # Verify compilation ✨
-│   ├── run-review.sh          # Run code review
-│   ├── verify-plugin.sh       # Verify plugin functionality
 │   ├── archive-test.sh        # Archive test cases ✨
 │   └── publish-plugin.sh      # Release new version
 │
@@ -76,18 +74,12 @@ class BadExample {
 
 ### Step 2: Run Code Review
 
-Two options:
-
-**Option A: Use Script (Recommended)**
-```bash
-./scripts/run-review.sh 004-my-test
-```
-
-**Option B: Manual Execution**
-In Claude Code, run:
+In Claude Code, run the review command directly:
 ```
 /android-code-review --target file:test-cases/004-my-test.kt
 ```
+
+The plugin will analyze the file and report any issues detected.
 
 ### Step 3: Analyze Results
 
@@ -112,12 +104,17 @@ Add new detection rules...
 
 ### Step 5: Verify Improvements
 
-Run verification script:
+Run manual verification on all test cases to ensure the improvements work:
+
 ```bash
-./scripts/verify-plugin.sh
+# Test each case individually
+for file in test-cases/*.kt; do
+    echo "Testing: $file"
+    # /android-code-review --target file:$file
+done
 ```
 
-Script will test all cases and confirm:
+Verify:
 - [ ] All issues are detected
 - [ ] Severity is correct
 - [ ] Fix suggestions are useful
@@ -184,11 +181,6 @@ Claude Code loads plugins in the following order:
 ./scripts/verify-isolation.sh
 ```
 
-**Auto-verification:**
-- `run-review.sh` verifies at start
-- `verify-plugin.sh` verifies at start
-- `verify-build.sh` does not verify (only checks compilation)
-
 **Key Points:**
 - ✅ Project-level plugin overrides user-level
 - ✅ Changes only affect current project
@@ -200,18 +192,18 @@ Claude Code loads plugins in the following order:
 #### **Tier 1: Standalone Files (Quick Verification)**
 - Location: `test-cases/*.kt`
 - Purpose: Quick verification of single detection rules
-- Command: `./scripts/run-review.sh <test-id>`
+- Command: `/android-code-review --target file:test-cases/<file>.kt`
 
 #### **Tier 2: Real Android Project (Deep Testing) ✨**
 - Location: `test-android/`
 - Purpose: Test in real project environment
-- Command: `cd test-android/ && /android-code-review --target file:...`
+- Command: `cd test-android/ && /android-code-review --target file:app/src/main/java/com/test/bugs/...`
 - Build verification: `./scripts/verify-build.sh`
 
 #### **Tier 3: Batch Regression Testing**
 - Location: `test-cases/*.kt` (all)
-- Purpose: Verify all detection rules
-- Command: `./scripts/verify-plugin.sh`
+- Purpose: Verify all detection rules still work
+- Method: Manually run review on each test file
 
 ### Verify Isolation
 
@@ -323,8 +315,9 @@ class AsyncTaskLeak : Activity() {
 
 ### 2. Run Review
 
-```bash
-./scripts/run-review.sh 004-async-task-leak
+In Claude Code, run:
+```
+/android-code-review --target file:test-cases/004-async-task-leak.kt
 ```
 
 ### 3. Modify Plugin
@@ -358,8 +351,11 @@ class SafeActivity : Activity() {
 
 ### 4. Verify
 
-```bash
-./scripts/verify-plugin.sh
+Run review on all test cases to verify:
+```
+/android-code-review --target file:test-cases/001-*.kt
+/android-code-review --target file:test-cases/002-*.kt
+# ... etc
 ```
 
 ### 5. Release
@@ -371,8 +367,9 @@ class SafeActivity : Activity() {
 ## Getting Help
 
 - 📖 View test cases: `test-cases/`
-- 🔧 Run tests: `scripts/run-review.sh`
-- ✅ Verify functionality: `scripts/verify-plugin.sh`
+- 🔧 Run tests: `/android-code-review --target file:<path>`
+- ✅ Verify isolation: `scripts/verify-isolation.sh`
+- 🔨 Verify build: `scripts/verify-build.sh`
 - 🚀 Release updates: `scripts/publish-plugin.sh`
 
 ---
