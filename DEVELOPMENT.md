@@ -25,11 +25,24 @@ claude-code-for-android/
 │   └── 003-unsafe-null.kt
 │
 ├── scripts/                    # 自动化脚本
+│   ├── verify-isolation.sh    # 验证 plugin 隔离 ✨
+│   ├── verify-build.sh        # 验证编译 ✨
 │   ├── run-review.sh          # 运行代码审查
 │   ├── verify-plugin.sh       # 验证 plugin 功能
+│   ├── archive-test.sh        # 归档测试用例 ✨
 │   └── publish-plugin.sh      # 发布新版本
 │
-└── test-project/              # 测试用 Android 项目
+├── test-android/              # 测试用 Android 项目 ✨
+│   ├── app/src/main/java/com/test/
+│   │   ├── examples/          # 正确代码示例
+│   │   └── bugs/              # 有问题的代码
+│   ├── config/                # Detekt & Checkstyle 配置
+│   └── .claude/               # ⚠️ 必须为空！
+│
+└── test-cases/                # 独立测试文件（快速验证）
+│   ├── 001-security-hardcoded-secrets.kt
+│   ├── 002-memory-handler-leak.kt
+│   └── 003-unsafe-null.kt
 ```
 
 ## 🔄 开发工作流
@@ -109,7 +122,32 @@ class BadExample {
 - [ ] 严重程度正确
 - [ ] 修复建议有用
 
-### Step 6: 发布更新
+### Step 6: 真实环境测试（可选） ✨
+
+在真实 Android 项目中测试：
+
+```bash
+# 1. 验证隔离配置
+./scripts/verify-isolation.sh
+
+# 2. 在测试项目中编写/修改问题代码
+cd test-android/
+# 编辑 app/src/main/java/com/test/bugs/...
+
+# 3. 运行 AI Review
+/android-code-review --target file:app/src/main/java/com/test/bugs/001-npe/ForceUnwrapActivity.kt
+
+# 4. 验证编译（重要！）
+cd ../
+./scripts/verify-build.sh
+```
+
+**编译验证的意义：**
+- ✅ 确认代码可以实际编译
+- ✅ 发现 plugin 误报（plugin 说有问题，但代码可编译）
+- ✅ 减少 AI token 消耗（脚本运行 Gradle，不用 AI）
+
+### Step 7: 发布更新
 
 当所有测试通过后：
 
@@ -131,15 +169,49 @@ class BadExample {
 Claude Code 按以下顺序加载 plugin：
 
 ```
-1. Project-level:  ./.claude/          ← 你的开发版本
-2. User-level:     ~/.claude/          ← 已安装的稳定版本
+1. test-android/.claude/              ← 如果存在，优先加载（测试项目）
+2. (Git root)/.claude/                ← 你的开发版本 ✅
+3. ~/.claude/                          ← 用户安装的稳定版本
 ```
+
+**关键约束：**
+> ⚠️ **重要：** `test-android/.claude/` 目录必须**不存在**或为**空**
+>
+> 如果测试项目有自己的 `.claude/`，会覆盖开发版本！
+
+**验证方法：**
+```bash
+./scripts/verify-isolation.sh
+```
+
+**自动验证：**
+- `run-review.sh` 开头自动验证
+- `verify-plugin.sh` 开头自动验证
+- `verify-build.sh` 不会验证（只验证编译）
 
 **关键点：**
 - ✅ 项目级 plugin 会覆盖用户级
 - ✅ 修改只影响当前项目
 - ✅ 不影响其他项目或 marketplace
 - ⚠️ 需要重启 Claude Code 才能加载修改
+
+### 三层测试体系
+
+#### **Layer 1: 独立测试文件**（快速验证）
+- 位置：`test-cases/*.kt`
+- 用途：快速验证单个检测规则
+- 命令：`./scripts/run-review.sh <test-id>`
+
+#### **Layer 2: 真实 Android 项目**（深度测试） ✨
+- 位置：`test-android/`
+- 用途：在真实项目环境中测试
+- 命令：`cd test-android/ && /android-code-review --target file:...`
+- 编译验证：`./scripts/verify-build.sh`
+
+#### **Layer 3: 批量回归测试**
+- 位置：`test-cases/*.kt`（全部）
+- 用途：验证所有检测规则
+- 命令：`./scripts/verify-plugin.sh`
 
 ### 验证隔离
 

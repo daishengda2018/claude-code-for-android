@@ -1,10 +1,21 @@
 #!/bin/bash
 # Run Android Code Review on Test Cases
 
-set -e
+set -e  # Abort on any error
 
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TEST_CASES_DIR="$PROJECT_ROOT/test-cases"
+
+# Auto-verify plugin isolation before running
+if ! bash "$PROJECT_ROOT/scripts/verify-isolation.sh" --quiet; then
+    echo ""
+    echo "❌ Cannot proceed: Plugin isolation check failed"
+    echo ""
+    bash "$PROJECT_ROOT/scripts/verify-isolation.sh"
+    echo ""
+    echo "The development plugin cannot be loaded while test-android/.claude/ exists."
+    exit 1
+fi
 
 echo "🔍 Android Code Review - Test Runner"
 echo "===================================="
