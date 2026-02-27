@@ -77,6 +77,35 @@ android-code-review --target all --severity critical
 android-code-review --target commit:a1b2c3d
 ```
 
+### 审查 Pull Request
+
+```bash
+# 通过 PR 编号审查
+android-code-review --target pr:123
+
+# 按严重级别过滤 PR 审查
+android-code-review --target pr:123 --severity high
+
+# 以 JSON 格式输出（用于 CI/CD）
+android-code-review --target pr:123 --output-format json
+```
+
+### 高级用法
+
+```bash
+# 使用 light 模式快速审查（减少 30% token）
+android-code-review --target all --mode light
+
+# 安全关键审查（减少 84% token）
+android-code-review --target staged --severity critical
+
+# 使用项目特定指南审查
+android-code-review --target staged --project-guidelines ./ANDROID.md
+
+# 仅审查 PR 差异（更快）
+android-code-review --target pr:123 --pr-context diff-only
+```
+
 ---
 
 ## 审查内容
@@ -92,14 +121,73 @@ android-code-review --target commit:a1b2c3d
 
 ---
 
+## Pull Request 审查
+
+### 本地 PR 审查
+
+```bash
+# 在合并前审查 PR
+android-code-review --target pr:123
+
+# 仅高严重级别（更快）
+android-code-review --target pr:123 --severity high
+
+# 导出为 JSON 用于归档
+android-code-review --target pr:123 --output-format json > pr-123-review.json
+```
+
+### CI/CD 集成
+
+GitHub Actions 工作流示例：
+
+```yaml
+name: Android 代码审查
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  code-review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: 运行 Android 代码审查
+        run: |
+          android-code-review --target ${{ github.sha }} \
+                              --severity high \
+                              --output-format json > review.json
+
+      - name: 检查结果
+        run: |
+          CRITICAL=$(jq '.summary.by_severity.CRITICAL' review.json)
+          if [ "$CRITICAL" -gt 0 ]; then
+            echo "❌ 检测到 CRITICAL 问题。PR 已阻止。"
+            exit 1
+          fi
+```
+
+### PR 上下文模式
+
+| 模式 | 描述 | 使用场景 |
+|------|------|----------|
+| `full` | 完整 PR 元数据 + 差异 + 提交 | 全面审查 |
+| `diff-only` | 仅代码更改 | 大型 PR 快速审查 |
+| `commits-only` | 仅提交消息 | 快速提交历史检查 |
+
+---
+
 ## 命令选项
 
 | 参数 | 值 | 默认值 | 描述 |
 |------|-----|--------|------|
-| `--target` | `staged`、`all`、`commit:<hash>`、`file:<path>` | `staged` | 审查范围 |
-| `--severity` | `critical`、`high`、`medium`、`low`、`all` | `all` | 按严重级别过滤 |
-| `--project-guidelines` | `<file-path>` | - | 自定义指南文件 |
-| `--output-format` | `markdown`、`json` | `markdown` | 输出格式 |
+| `--target` | `staged`、`all`、`commit:<hash>`、`file:<path>`、`pr:<number\|url>` | `staged` | 审查范围 |
+| `--severity` | `critical`、`high`、`medium`、`low`、`all` | `all` | 按严重级别过滤（控制渐进式加载） |
+| `--mode` | `light`、`normal` | `normal` | 执行模式（light = 减少 30% token） |
+| `--pr-context` | `full`、`diff-only`、`commits-only` | `full` | PR 上下文级别（用于 pr: 目标） |
+| `--project-guidelines` | `<file-path>` | - | 自定义指南文件（如 ANDROID.md、lint.xml） |
+| `--output-format` | `markdown`、`json` | `markdown` | 输出格式（JSON 包含置信度分数） |
 
 ---
 

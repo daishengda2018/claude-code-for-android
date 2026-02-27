@@ -71,6 +71,35 @@ android-code-review --target all --severity critical
 android-code-review --target commit:a1b2c3d
 ```
 
+### Review Pull Request
+
+```bash
+# Review PR by number
+android-code-review --target pr:123
+
+# Review PR with severity filter
+android-code-review --target pr:123 --severity high
+
+# Review PR with JSON output (for CI/CD)
+android-code-review --target pr:123 --output-format json
+```
+
+### Advanced Usage
+
+```bash
+# Fast review with light mode (30% token reduction)
+android-code-review --target all --mode light
+
+# Security-focused review (84% token reduction)
+android-code-review --target staged --severity critical
+
+# Review with project-specific guidelines
+android-code-review --target staged --project-guidelines ./ANDROID.md
+
+# PR review with minimal context (faster)
+android-code-review --target pr:123 --pr-context diff-only
+```
+
 ## What Gets Reviewed
 
 | Category | Checks |
@@ -82,14 +111,71 @@ android-code-review --target commit:a1b2c3d
 | **Performance** | ANR risks, layout inefficiencies, bitmap mismanagement, startup bottlenecks |
 | **Best Practices** | Naming conventions, documentation, accessibility, resource management |
 
+## Pull Request Review
+
+### Local PR Review
+
+```bash
+# Review a PR before merging
+android-code-review --target pr:123
+
+# High-severity only (faster)
+android-code-review --target pr:123 --severity high
+
+# Export as JSON for archiving
+android-code-review --target pr:123 --output-format json > pr-123-review.json
+```
+
+### CI/CD Integration
+
+Example GitHub Actions workflow:
+
+```yaml
+name: Android Code Review
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  code-review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Run Android Code Review
+        run: |
+          android-code-review --target ${{ github.sha }} \
+                              --severity high \
+                              --output-format json > review.json
+
+      - name: Check Results
+        run: |
+          CRITICAL=$(jq '.summary.by_severity.CRITICAL' review.json)
+          if [ "$CRITICAL" -gt 0 ]; then
+            echo "❌ CRITICAL issues detected. PR blocked."
+            exit 1
+          fi
+```
+
+### PR Context Modes
+
+| Mode | Description | Use Case |
+|------|-------------|----------|
+| `full` | Full PR metadata + diff + commits | Comprehensive review |
+| `diff-only` | Code changes only | Faster review for large PRs |
+| `commits-only` | Commit messages only | Quick commit history check |
+
 ## Command Options
 
 | Parameter | Values | Default | Description |
 |-----------|--------|---------|-------------|
-| `--target` | `staged`, `all`, `commit:<hash>`, `file:<path>` | `staged` | Review scope |
-| `--severity` | `critical`, `high`, `medium`, `low`, `all` | `all` | Filter by severity |
-| `--project-guidelines` | `<file-path>` | - | Custom guidelines file |
-| `--output-format` | `markdown`, `json` | `markdown` | Output format |
+| `--target` | `staged`, `all`, `commit:<hash>`, `file:<path>`, `pr:<number\|url>` | `staged` | Review scope |
+| `--severity` | `critical`, `high`, `medium`, `low`, `all` | `all` | Filter by severity (controls progressive loading) |
+| `--mode` | `light`, `normal` | `normal` | Execution mode (light = 30% token reduction) |
+| `--pr-context` | `full`, `diff-only`, `commits-only` | `full` | PR context level (for pr: target) |
+| `--project-guidelines` | `<file-path>` | - | Custom guidelines file (e.g., ANDROID.md, lint.xml) |
+| `--output-format` | `markdown`, `json` | `markdown` | Output format (JSON includes confidence scores) |
 
 ## Example Output
 
