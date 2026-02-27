@@ -1,0 +1,309 @@
+# Android Code Review 规则元数据
+# Version: 1.1.0
+# Last Updated: 2025-02-27
+#
+# 此文件定义了所有审查规则的元数据，支持规则的启用/禁用、优先级、置信度阈值配置
+# 规则变更后无需重启 Claude Code 即可生效（热更新）
+
+version: "1.1.0"
+schema_version: "1.0"
+
+# ============================================================================
+# 全局配置
+# ============================================================================
+global_config:
+  default_confidence_threshold: 0.8
+  max_findings_per_rule: 50
+  consolidate_similar_findings: true
+
+  # 置信度计算权重
+  confidence_weights:
+    semantic_match: 0.6      # 语义匹配得分权重
+    rule_coverage: 0.4       # 规则覆盖完整度权重
+    pattern_match: 0.0       # 正则模式匹配权重（可选）
+
+# ============================================================================
+# 规则定义
+# ============================================================================
+rules:
+  # ==========================================================================
+  # SEC - Security (P0/CRITICAL)
+  # ==========================================================================
+  - rule_id: SEC-001
+    severity: P0
+    category: Security
+    title: 硬编码凭证检测
+    enabled: true
+    confidence_threshold: 0.8
+    priority_weight: 100
+    global_priority: true  # 全局核心规则，项目规则不可覆盖
+
+    checklist_path: references/sec-001-hardcoded-secret.md
+    checklist_token_estimate: 800
+
+    description: |
+      检测代码中硬编码的API密钥、OAuth凭证、加密密钥、JWT签名等敏感信息。
+      这些信息会被提交到Git历史，APK反编译后可提取，导致后端服务泄露。
+
+    patterns:
+      - regex: '(?i)(api[_-]?key|secret|password|token|auth[_-]?token|access[_-]?key)\s*=\s*["\x27][^"\x27]{8,}["\x27]'
+        language: [kotlin, java, xml]
+        confidence_contribution: 0.7
+      - regex: '(?i)(sk_|pk_|ssh-rsa|Bearer\s+[A-Za-z0-9\-._~+/]+=*)'
+        language: [kotlin, java]
+        confidence_contribution: 0.9
+
+    risk_features:
+      - name: "硬编码字符串字面量"
+        weight: 0.5
+      - name: "生产环境关键词"
+        weight: 0.3
+        keywords: ["prod", "live", "production", "release"]
+      - name: "长度可疑"
+        weight: 0.2
+        threshold: 16
+
+    exemptions:
+      - comment: "// code-review-ignore"
+      - block: "/*code-review-ignore*/"
+      - annotation: "@Suppress(\"HardcodedSecret\")"
+
+    tags: [security, credentials, hardcoded, owasp, secret-management]
+
+  - rule_id: SEC-002
+    severity: P0
+    category: Security
+    title: 不安全数据存储
+    enabled: true
+    confidence_threshold: 0.85
+    priority_weight: 100
+    global_priority: true
+
+    checklist_path: references/sec-002-insecure-storage.md
+    checklist_token_estimate: 750
+
+    description: |
+      检测敏感数据（PII、认证token、密码）以明文形式存储在SharedPreferences、
+      SQLite或外部存储中。这些数据在root设备上可被直接读取。
+
+    patterns:
+      - pattern: "getSharedPreferences with MODE_PRIVATE"
+        check: "value contains sensitive data"
+        confidence_contribution: 0.8
+      - pattern: "SQLiteOpenHelper without SQLCipher"
+        confidence_contribution: 0.7
+
+    tags: [security, storage, encryption, pii]
+
+  - rule_id: SEC-003
+    severity: P0
+    category: Security
+    title: 不安全Intent处理
+    enabled: true
+    confidence_threshold: 0.8
+    priority_weight: 95
+    global_priority: true
+
+    checklist_path: references/sec-003-unsafe-intent.md
+    checklist_token_estimate: 700
+
+    description: |
+      检测隐式Intent使用未验证组件、导出的Activity/Service/Receiver缺少权限保护，
+      可能导致Intent劫持攻击。
+
+    tags: [security, intent, hijacking, component-security]
+
+  # ... SEC-004 到 SEC-009 的其他安全规则
+
+  # ==========================================================================
+  # QUAL - Code Quality (P1/HIGH)
+  # ==========================================================================
+  - rule_id: QUAL-001
+    severity: P1
+    category: Code Quality
+    title: 超长函数检测
+    enabled: true
+    confidence_threshold: 0.85
+    priority_weight: 70
+    global_priority: false
+
+    checklist_path: references/qual-001-to-010-large-function.md
+    checklist_token_estimate: 600
+
+    description: |
+      检测超过50行的函数，需要拆分为更小的单一职责函数。
+      超长函数难以理解、测试和维护。
+
+    metrics:
+      - name: "line_count"
+        threshold: 50
+        severity_multiplier: 1.0
+      - name: "cyclomatic_complexity"
+        threshold: 10
+        severity_multiplier: 1.2
+
+    tags: [quality, maintainability, complexity, refactoring]
+
+  - rule_id: QUAL-002
+    severity: P1
+    category: Code Quality
+    title: 超长文件检测
+    enabled: true
+    confidence_threshold: 0.9
+    priority_weight: 70
+    global_priority: false
+
+    checklist_path: references/qual-001-to-010-large-function.md
+    checklist_token_estimate: 600
+
+    description: |
+      检测超过800行的文件，需要提取逻辑到独立组件。
+      建议拆分为ViewModel、UseCase、Repository或UI辅助类。
+
+    metrics:
+      - name: "line_count"
+        threshold: 800
+        severity_multiplier: 1.0
+
+    tags: [quality, maintainability, refactoring]
+
+  - rule_id: QUAL-005
+    severity: P1
+    category: Code Quality
+    title: 内存泄漏检测
+    enabled: true
+    confidence_threshold: 0.8
+    priority_weight: 75
+    global_priority: false
+
+    checklist_path: references/qual-005-to-015-memory-leak.md
+    checklist_token_estimate: 900
+
+    description: |
+      检测静态Activity/Context引用、非静态Handler持有Activity引用、
+      未注销的BroadcastReceiver/EventBus监听器、未取消的协程/RxJava订阅。
+
+    patterns:
+      - pattern: "static Context/Activity field"
+        confidence_contribution: 0.9
+      - pattern: "non-static Handler in Activity"
+        confidence_contribution: 0.85
+      - pattern: "missing onDestroy cleanup"
+        confidence_contribution: 0.7
+
+    tags: [quality, memory, leak, lifecycle]
+
+  # ... 其他 QUAL 规则
+
+  # ==========================================================================
+  # ARCH - Android Architecture (P1/HIGH)
+  # ==========================================================================
+  - rule_id: ARCH-001
+    severity: P1
+    category: Architecture
+    title: ViewModel持有Context引用
+    enabled: true
+    confidence_threshold: 0.9
+    priority_weight: 80
+    global_priority: false
+
+    checklist_path: references/arch-001-to-008-viewmodel-context.md
+    checklist_token_estimate: 700
+
+    description: |
+      ViewModel持有Activity/Fragment Context引用会导致内存泄漏。
+      应使用Application Context或避免在ViewModel中持有Context。
+
+    tags: [architecture, viewmodel, memory, leak]
+
+  # ... 其他 ARCH 规则
+
+  # ==========================================================================
+  # PERF - Performance (P2/MEDIUM)
+  # ==========================================================================
+  - rule_id: PERF-001
+    severity: P2
+    category: Performance
+    title: 布局低效
+    enabled: true
+    confidence_threshold: 0.75
+    priority_weight: 40
+    global_priority: false
+
+    checklist_path: references/perf-001-to-008-performance.md
+    checklist_token_estimate: 2400
+    checklist_rules: [PERF-001, PERF-002, PERF-003, PERF-004, PERF-005, PERF-006, PERF-007, PERF-008]
+
+    description: |
+      检测在主线程执行的网络请求、数据库操作、文件IO等耗时操作，
+      可能导致ANR或UI卡顿。同时检测布局低效、ANR风险、Bitmap管理等问题。
+
+    tags: [performance, anr, main-thread, io, layout, bitmap, compose]
+
+  - rule_id: PERF-008
+    severity: P2
+    category: Performance
+    title: 避免不必要的重组
+    enabled: true
+    confidence_threshold: 0.75
+    priority_weight: 40
+    global_priority: false
+
+    checklist_path: references/perf-001-to-008-performance.md
+    checklist_token_estimate: 2400
+
+    description: |
+      检测 Jetpack Compose 中可避免的频繁重组，包括不稳定类型、未使用 remember 的计算、
+      以及不必要的参数传递。
+
+    tags: [performance, compose, recomposition, jetpack]
+
+  # ==========================================================================
+  # PRAC - Best Practices (P3/LOW)
+  # ==========================================================================
+  - rule_id: PRAC-001
+    severity: P3
+    category: Best Practices
+    title: 命名规范
+    enabled: true
+    confidence_threshold: 0.75
+    priority_weight: 20
+    global_priority: false
+
+    checklist_path: references/prac-001-to-008-naming.md
+    checklist_token_estimate: 500
+
+    description: |
+      检测不符合Kotlin/Java命名规范的代码，包括类名、函数名、变量名等。
+
+    tags: [practices, naming, style]
+
+# ============================================================================
+# 规则组（用于批量启用/禁用）
+# ============================================================================
+rule_groups:
+  security_core:
+    name: "核心安全规则"
+    rules: [SEC-001, SEC-002, SEC-003, SEC-004, SEC-005]
+    description: "必须启用的安全审查规则，不可禁用"
+
+  quality_core:
+    name: "核心质量规则"
+    rules: [QUAL-001, QUAL-002, QUAL-005, QUAL-009]
+    description: "推荐的代码质量规则"
+
+  performance_all:
+    name: "性能优化规则"
+    rules: [PERF-001, PERF-002, PERF-003, PERF-004, PERF-005, PERF-006, PERF-007, PERF-008]
+    description: "性能优化相关规则（布局、ANR、Bitmap、启动性能、SharedPreferences、WakeLock、Compose重组）"
+
+# ============================================================================
+# 依赖关系（规则执行顺序）
+# ============================================================================
+dependencies:
+  ARCH-001:
+    depends_on: []
+    reason: "ViewModel检查应优先于一般内存泄漏检查"
+  QUAL-005:
+    depends_on: [ARCH-001]
+    reason: "架构级内存泄漏检查优先于通用检查"
