@@ -168,7 +168,7 @@ claude-code-for-android/
 
 如果你想参与开发或了解内部实现，请查看：
 
-- 📖 [开发指南](DEVELOPMENT.md) - Plugin 开发指南
+- 📖 [开发指南](DEVELOPMENT_ZH.md) - Plugin 开发指南
 - 🎨 [设计文档](docs/plans/2026-02-27-android-test-project-integration-design.md) - 架构设计
 - 🔄 [开发工作流](docs/workflows/development-cycle.md) - 开发周期
 - 📜 [变更日志](CHANGELOG.md) - 版本历史

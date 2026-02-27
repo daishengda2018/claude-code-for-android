@@ -140,6 +140,14 @@ This plugin enforces compliance with:
 - [Kotlin Style Guide for Android](https://developer.android.com/kotlin/style-guide)
 - Jetpack Compose [Performance & Best Practices](https://developer.android.com/jetpack/compose/performance)
 
+## Development Documentation
+
+Want to contribute or understand the internal implementation? Check out:
+
+- 📖 [Development Guide](DEVELOPMENT.md) - Plugin development guide
+- 🎨 [Design Document](docs/plans/2026-02-27-android-test-project-integration-design.md) - Architecture design
+- 🔄 [Development Workflow](docs/workflows/development-cycle.md) - Development cycle
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.

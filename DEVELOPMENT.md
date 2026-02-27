@@ -1,55 +1,55 @@
 # Plugin Development Guide
 
-本指南说明如何开发和测试 `android-code-reviewer` plugin。
+This guide explains how to develop and test the `android-code-reviewer` plugin.
 
-## 🎯 概述
+## Overview
 
-这个项目采用**测试驱动开发**的方法：
-1. 编写有问题的代码作为测试用例
-2. 运行 plugin 检测问题
-3. 优化 plugin 以提高检测率
-4. 验证无误后发布新版本
+This project uses a **Test-Driven Development** approach:
+1. Write buggy code as test cases
+2. Run plugin to detect issues
+3. Optimize plugin to improve detection rate
+4. Verify and release new version
 
-## 📁 项目结构
+## Project Structure
 
 ```
 claude-code-for-android/
-├── .claude/                    # Plugin 源码（开发版本）
+├── .claude/                    # Plugin source (development version)
 │   ├── agents/
-│   │   └── android-code-reviewer.md  # ⚠️ 在这里修改
+│   │   └── android-code-reviewer.md  # ⚠️ Edit this file
 │   └── plugin-manifest.json
 │
-├── test-cases/                 # 测试用例 ✨
+├── test-cases/                 # Test cases ✨
 │   ├── 001-security-hardcoded-secrets.kt
 │   ├── 002-memory-handler-leak.kt
 │   └── 003-unsafe-null.kt
 │
-├── scripts/                    # 自动化脚本
-│   ├── verify-isolation.sh    # 验证 plugin 隔离 ✨
-│   ├── verify-build.sh        # 验证编译 ✨
-│   ├── run-review.sh          # 运行代码审查
-│   ├── verify-plugin.sh       # 验证 plugin 功能
-│   ├── archive-test.sh        # 归档测试用例 ✨
-│   └── publish-plugin.sh      # 发布新版本
+├── scripts/                    # Automation scripts
+│   ├── verify-isolation.sh    # Verify plugin isolation ✨
+│   ├── verify-build.sh        # Verify compilation ✨
+│   ├── run-review.sh          # Run code review
+│   ├── verify-plugin.sh       # Verify plugin functionality
+│   ├── archive-test.sh        # Archive test cases ✨
+│   └── publish-plugin.sh      # Release new version
 │
-├── test-android/              # 测试用 Android 项目 ✨
+├── test-android/              # Test Android project ✨
 │   ├── app/src/main/java/com/test/
-│   │   ├── examples/          # 正确代码示例
-│   │   └── bugs/              # 有问题的代码
-│   ├── config/                # Detekt & Checkstyle 配置
-│   └── .claude/               # ⚠️ 必须为空！
+│   │   ├── examples/          # Correct code examples
+│   │   └── bugs/              # Buggy code
+│   ├── config/                # Detekt & Checkstyle configs
+│   └── .claude/               # ⚠️ Must be empty!
 │
-└── test-cases/                # 独立测试文件（快速验证）
-│   ├── 001-security-hardcoded-secrets.kt
-│   ├── 002-memory-handler-leak.kt
-│   └── 003-unsafe-null.kt
+└── test-cases/                # Standalone test files (quick verification)
+    ├── 001-security-hardcoded-secrets.kt
+    ├── 002-memory-handler-leak.kt
+    └── 003-unsafe-null.kt
 ```
 
-## 🔄 开发工作流
+## Development Workflow
 
-### Step 1: 编写测试用例
+### Step 1: Write Test Case
 
-在 `test-cases/` 目录创建新的测试文件：
+Create a new test file in `test-cases/`:
 
 ```kotlin
 // test-cases/004-my-test.kt
@@ -60,11 +60,11 @@ package com.test
 // File: test-cases/004-my-test.kt
 
 class BadExample {
-    // 故意写的问题代码
+    // Intentionally buggy code
     private val leak = Handler()
 
     override fun onDestroy() {
-        // 缺少清理
+        // Missing cleanup
     }
 }
 
@@ -74,246 +74,246 @@ class BadExample {
 // [ ] Plugin suggests proper cleanup
 ```
 
-### Step 2: 运行代码审查
+### Step 2: Run Code Review
 
-有两种方式：
+Two options:
 
-**方式 A: 使用脚本（推荐）**
+**Option A: Use Script (Recommended)**
 ```bash
 ./scripts/run-review.sh 004-my-test
 ```
 
-**方式 B: 手动运行**
-在 Claude Code 中运行：
+**Option B: Manual Execution**
+In Claude Code, run:
 ```
 /android-code-review --target file:test-cases/004-my-test.kt
 ```
 
-### Step 3: 分析结果
+### Step 3: Analyze Results
 
-查看 plugin 是否检测到问题：
-- ✅ 检测到了 → 进入 Step 5
-- ❌ 漏检了 → 进入 Step 4
-- ⚠️ 误检了 → 进入 Step 4
+Check if plugin detected the issue:
+- ✅ Detected → Go to Step 5
+- ❌ Missed → Go to Step 4
+- ⚠️ False positive → Go to Step 4
 
-### Step 4: 改进 Plugin
+### Step 4: Improve Plugin
 
-编辑 `.claude/agents/android-code-reviewer.md`：
+Edit `.claude/agents/android-code-reviewer.md`:
 
 ```markdown
 ## 🔍 Review Checklist
 
 ### Memory Leak Checks
 
-添加新的检测规则...
+Add new detection rules...
 ```
 
-**重要：修改后需要重启 Claude Code！**
+**Important: Restart Claude Code after modifications!**
 
-### Step 5: 验证改进
+### Step 5: Verify Improvements
 
-运行验证脚本：
+Run verification script:
 ```bash
 ./scripts/verify-plugin.sh
 ```
 
-脚本会逐个测试所有用例，确认：
-- [ ] 所有问题都被检测到
-- [ ] 严重程度正确
-- [ ] 修复建议有用
+Script will test all cases and confirm:
+- [ ] All issues are detected
+- [ ] Severity is correct
+- [ ] Fix suggestions are useful
 
-### Step 6: 真实环境测试（可选） ✨
+### Step 6: Real Environment Testing (Optional) ✨
 
-在真实 Android 项目中测试：
+Test in real Android project:
 
 ```bash
-# 1. 验证隔离配置
+# 1. Verify isolation configuration
 ./scripts/verify-isolation.sh
 
-# 2. 在测试项目中编写/修改问题代码
+# 2. Write/modify buggy code in test project
 cd test-android/
-# 编辑 app/src/main/java/com/test/bugs/...
+# Edit app/src/main/java/com/test/bugs/...
 
-# 3. 运行 AI Review
+# 3. Run AI Review
 /android-code-review --target file:app/src/main/java/com/test/bugs/001-npe/ForceUnwrapActivity.kt
 
-# 4. 验证编译（重要！）
+# 4. Verify compilation (Important!)
 cd ../
 ./scripts/verify-build.sh
 ```
 
-**编译验证的意义：**
-- ✅ 确认代码可以实际编译
-- ✅ 发现 plugin 误报（plugin 说有问题，但代码可编译）
-- ✅ 减少 AI token 消耗（脚本运行 Gradle，不用 AI）
+**Why verify compilation:**
+- ✅ Confirm code can actually compile
+- ✅ Detect plugin false positives (plugin says issue, but code compiles)
+- ✅ Reduce AI token usage (script runs Gradle, not AI)
 
-### Step 7: 发布更新
+### Step 7: Release Update
 
-当所有测试通过后：
+When all tests pass:
 
 ```bash
 ./scripts/publish-plugin.sh
 ```
 
-脚本会自动：
-1. 更新版本号
-2. 提交更改
-3. 创建 git tag
-4. 推送到远程
-5. 提示创建 GitHub release
+Script will automatically:
+1. Update version number
+2. Commit changes
+3. Create git tag
+4. Push to remote
+5. Prompt to create GitHub release
 
-## 🔒 Plugin 隔离说明
+## Plugin Isolation
 
-### 工作原理
+### How It Works
 
-Claude Code 按以下顺序加载 plugin：
+Claude Code loads plugins in the following order:
 
 ```
-1. test-android/.claude/              ← 如果存在，优先加载（测试项目）
-2. (Git root)/.claude/                ← 你的开发版本 ✅
-3. ~/.claude/                          ← 用户安装的稳定版本
+1. test-android/.claude/              ← If exists, loaded first (test project)
+2. (Git root)/.claude/                ← Your development version ✅
+3. ~/.claude/                          ← User-installed stable version
 ```
 
-**关键约束：**
-> ⚠️ **重要：** `test-android/.claude/` 目录必须**不存在**或为**空**
+**Critical Constraint:**
+> ⚠️ **Important:** `test-android/.claude/` directory must **not exist** or be **empty**
 >
-> 如果测试项目有自己的 `.claude/`，会覆盖开发版本！
+> If test project has its own `.claude/`, it will override development version!
 
-**验证方法：**
+**Verification:**
 ```bash
 ./scripts/verify-isolation.sh
 ```
 
-**自动验证：**
-- `run-review.sh` 开头自动验证
-- `verify-plugin.sh` 开头自动验证
-- `verify-build.sh` 不会验证（只验证编译）
+**Auto-verification:**
+- `run-review.sh` verifies at start
+- `verify-plugin.sh` verifies at start
+- `verify-build.sh` does not verify (only checks compilation)
 
-**关键点：**
-- ✅ 项目级 plugin 会覆盖用户级
-- ✅ 修改只影响当前项目
-- ✅ 不影响其他项目或 marketplace
-- ⚠️ 需要重启 Claude Code 才能加载修改
+**Key Points:**
+- ✅ Project-level plugin overrides user-level
+- ✅ Changes only affect current project
+- ✅ Does not affect other projects or marketplace
+- ⚠️ Must restart Claude Code to load changes
 
-### 三层测试体系
+### Three-Tier Testing System
 
-#### **Layer 1: 独立测试文件**（快速验证）
-- 位置：`test-cases/*.kt`
-- 用途：快速验证单个检测规则
-- 命令：`./scripts/run-review.sh <test-id>`
+#### **Tier 1: Standalone Files (Quick Verification)**
+- Location: `test-cases/*.kt`
+- Purpose: Quick verification of single detection rules
+- Command: `./scripts/run-review.sh <test-id>`
 
-#### **Layer 2: 真实 Android 项目**（深度测试） ✨
-- 位置：`test-android/`
-- 用途：在真实项目环境中测试
-- 命令：`cd test-android/ && /android-code-review --target file:...`
-- 编译验证：`./scripts/verify-build.sh`
+#### **Tier 2: Real Android Project (Deep Testing) ✨**
+- Location: `test-android/`
+- Purpose: Test in real project environment
+- Command: `cd test-android/ && /android-code-review --target file:...`
+- Build verification: `./scripts/verify-build.sh`
 
-#### **Layer 3: 批量回归测试**
-- 位置：`test-cases/*.kt`（全部）
-- 用途：验证所有检测规则
-- 命令：`./scripts/verify-plugin.sh`
+#### **Tier 3: Batch Regression Testing**
+- Location: `test-cases/*.kt` (all)
+- Purpose: Verify all detection rules
+- Command: `./scripts/verify-plugin.sh`
 
-### 验证隔离
+### Verify Isolation
 
 ```bash
-# 检查当前加载的 plugin
+# Check currently loaded plugin
 ls -la .claude/agents/android-code-reviewer.md
 
-# 对比用户级版本
+# Compare with user-level version
 ls -la ~/.claude/homunculus/evolved/agents/android-code-reviewer.md
 ```
 
-## 📊 测试覆盖率
+## Test Coverage
 
-当前测试用例覆盖：
+Current test case coverage:
 
-| 类别 | 测试用例 | 状态 |
-|------|---------|------|
+| Category | Test Case | Status |
+|----------|-----------|--------|
 | Security | 001-hardcoded-secrets | ✅ |
 | Memory | 002-handler-leak | ✅ |
 | Quality | 003-unsafe-null | ✅ |
 
-目标覆盖：
+Target coverage:
 - [ ] Security: 10+ cases
 - [ ] Memory: 8+ cases
 - [ ] Performance: 5+ cases
 - [ ] Architecture: 5+ cases
 - [ ] Quality: 10+ cases
 
-## 🚀 常见问题
+## FAQ
 
-### Q: 修改 plugin 后没有生效？
+### Q: Plugin changes not taking effect?
 
-**A:** 需要重启 Claude Code：
+**A:** Restart Claude Code:
 ```bash
 # macOS
 Quit Claude Code and reopen
 
-# 或者使用命令（如果支持）
+# Or use command (if supported)
 /claude restart
 ```
 
-### Q: 如何确认使用的是开发版？
+### Q: How to confirm using development version?
 
-**A:** 在项目中检查：
+**A:** Check in project:
 ```bash
-# 应该指向项目目录
+# Should point to project directory
 ls -la .claude/agents/
 
-# 而不是用户目录
+# Not user directory
 ls -la ~/.claude/homunculus/evolved/agents/
 ```
 
-### Q: 测试通过后如何发布？
+### Q: How to release after tests pass?
 
-**A:** 运行发布脚本：
+**A:** Run release script:
 ```bash
 ./scripts/publish-plugin.sh
 ```
 
-### Q: 会不会影响 marketplace 的其他用户？
+### Q: Will this affect other marketplace users?
 
-**A:** 不会！原因：
-1. 开发只在项目级进行
-2. 用户安装的是 marketplace 的特定版本
-3. 只有当你主动发布新版本时，用户才能获得更新
-4. 用户可以选择是否更新
+**A:** No! Reasons:
+1. Development is project-level only
+2. Users install specific marketplace versions
+3. Only when you release new version can users get updates
+4. Users can choose whether to update
 
-## 📝 开发最佳实践
+## Development Best Practices
 
-1. **小步迭代**
-   - 每次只修改一个检测规则
-   - 立即测试验证
-   - 频繁提交代码
+1. **Small Iterations**
+   - Modify one detection rule at a time
+   - Test and verify immediately
+   - Commit code frequently
 
-2. **测试驱动**
-   - 先写测试用例
-   - 再实现检测逻辑
-   - 确保所有测试通过
+2. **Test-Driven**
+   - Write test cases first
+   - Implement detection logic second
+   - Ensure all tests pass
 
-3. **文档同步**
-   - 修改 plugin 时更新文档
-   - 记录新的检测规则
-   - 添加示例代码
+3. **Documentation Sync**
+   - Update docs when modifying plugin
+   - Record new detection rules
+   - Add example code
 
-4. **版本管理**
-   - 遵循语义化版本
-   - 每个版本有明确更新内容
-   - 保持 CHANGELOG
+4. **Version Management**
+   - Follow semantic versioning
+   - Clear changelog for each version
+   - Maintain CHANGELOG
 
-## 🎓 示例：添加新的检测规则
+## Example: Adding New Detection Rule
 
-假设要添加"AsyncTask 泄漏"检测：
+Let's add "AsyncTask leak" detection:
 
-### 1. 写测试用例
+### 1. Write Test Case
 
 ```kotlin
 // test-cases/004-async-task-leak.kt
 class AsyncTaskLeak : Activity() {
-    // 内部类持有 Activity 引用
+    // Inner class holds Activity reference
     private inner class MyTask : AsyncTask<Void, Void, Void>() {
         override fun doInBackground(vararg params: Void?): Void? {
-            // 长时间运行
+            // Long-running work
             Thread.sleep(5000)
             return null
         }
@@ -321,15 +321,15 @@ class AsyncTaskLeak : Activity() {
 }
 ```
 
-### 2. 运行审查
+### 2. Run Review
 
 ```bash
 ./scripts/run-review.sh 004-async-task-leak
 ```
 
-### 3. 修改 Plugin
+### 3. Modify Plugin
 
-在 `.claude/agents/android-code-reviewer.md` 添加：
+Add to `.claude/agents/android-code-reviewer.md`:
 
 ```markdown
 ### AsyncTask Memory Leak Checks
@@ -356,24 +356,24 @@ class SafeActivity : Activity() {
 ```
 ```
 
-### 4. 验证
+### 4. Verify
 
 ```bash
 ./scripts/verify-plugin.sh
 ```
 
-### 5. 发布
+### 5. Release
 
 ```bash
 ./scripts/publish-plugin.sh
 ```
 
-## 📞 获取帮助
+## Getting Help
 
-- 📖 查看测试用例: `test-cases/`
-- 🔧 运行测试: `scripts/run-review.sh`
-- ✅ 验证功能: `scripts/verify-plugin.sh`
-- 🚀 发布更新: `scripts/publish-plugin.sh`
+- 📖 View test cases: `test-cases/`
+- 🔧 Run tests: `scripts/run-review.sh`
+- ✅ Verify functionality: `scripts/verify-plugin.sh`
+- 🚀 Release updates: `scripts/publish-plugin.sh`
 
 ---
 
