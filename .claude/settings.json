@@ -1,7 +1,10 @@
 {
   "permissions": {
     "additionalDirectories": [
-      "/Users/im_dsd/Documents/work_room/claude-code-for-android/.claude/references"
+      ".claude/references"
+    ],
+    "allow": [
+      "Bash(.gitignore:*)"
     ]
   }
 }

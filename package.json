@@ -1,6 +1,6 @@
 {
   "name": "claude-code-for-android",
-  "version": "1.0.0",
+  "version": "2.0.0-alpha",
   "description": "Android code review toolkit for Claude Code - automated quality, security, and performance checks",
   "keywords": ["android", "kotlin", "java", "code-review", "security", "jetpack"],
   "author": "daishengda2018",
@@ -11,7 +11,7 @@
   },
   "claude": {
     "type": "plugin",
-    "apiVersion": "1.0.0",
+    "apiVersion": "2.0.0-alpha",
     "capabilities": ["commands", "agents"],
     "categories": ["android", "code-review", "security"]
   }

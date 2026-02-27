@@ -16,6 +16,13 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
+# Detect OS for cross-platform sed compatibility
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    SED_FLAG="-i ''"
+else
+    SED_FLAG="-i"
+fi
+
 # Get current version
 CURRENT_VERSION=$(grep '"version"' "$PROJECT_ROOT/.claude/plugin-manifest.json" | cut -d'"' -f4)
 
@@ -49,12 +56,12 @@ fi
 
 # Update version in plugin-manifest.json
 echo -e "${YELLOW}Updating plugin-manifest.json...${NC}"
-sed -i '' "s/\"version\": \"$CURRENT_VERSION\"/\"version\": \"$NEW_VERSION\"/" \
+sed $SED_FLAG "s/\"version\": \"$CURRENT_VERSION\"/\"version\": \"$NEW_VERSION\"/" \
     "$PROJECT_ROOT/.claude/plugin-manifest.json"
 
 # Update version in marketplace.json
 echo -e "${YELLOW}Updating marketplace.json...${NC}"
-sed -i '' "s/\"version\": \"$CURRENT_VERSION\"/\"version\": \"$NEW_VERSION\"/" \
+sed $SED_FLAG "s/\"version\": \"$CURRENT_VERSION\"/\"version\": \"$NEW_VERSION\"/" \
     "$PROJECT_ROOT/.claude-plugin/marketplace.json"
 
 # Commit changes

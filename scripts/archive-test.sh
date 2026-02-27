@@ -41,7 +41,17 @@ echo "Archiving: $TEST_ID"
 echo "To: $ARCHIVE_DIR/"
 echo ""
 
-mv "$BUGS_DIR/$TEST_ID" "$ARCHIVE_DIR/"
+# Check if archive already contains same directory
+if [ -d "$ARCHIVE_DIR/$TEST_ID" ]; then
+    echo -e "${RED}❌ Archived version already exists: $ARCHIVE_DIR/$TEST_ID${NC}"
+    exit 1
+fi
+
+# Move with error handling
+mv "$BUGS_DIR/$TEST_ID" "$ARCHIVE_DIR/" || {
+    echo -e "${RED}❌ Failed to archive $TEST_ID${NC}"
+    exit 1
+}
 
 echo -e "${GREEN}✓ Archived $TEST_ID to $ARCHIVE_DIR/${NC}"
 echo ""
