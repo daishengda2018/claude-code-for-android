@@ -3,6 +3,8 @@
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Claude Code Plugin](https://img.shields.io/badge/Claude%20Code-Plugin-blue.svg)](https://claude.ai/claude-code)
 
+English | **[简体中文](README_ZH.md)**
+
 Automated Android code review for Kotlin/Java code — quality, security, and performance checks based on Google's official Android best practices.
 
 ## Features
