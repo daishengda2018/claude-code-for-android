@@ -29,12 +29,27 @@ claude-code-for-android/              ← Git repository root
 │   │   └── android-code-reviewer.md  ← Modify this file
 │   └── plugin-manifest.json
 │
-├── test-android/                     ← Real Android test project
+├── test-android/                     ← Real Android test project (compilable)
+│   ├── build.gradle                  ← Project-level Gradle config
+│   ├── settings.gradle
+│   ├── gradlew / gradlew.bat         ← Gradle wrapper
 │   ├── app/
-│   │   └── src/main/java/
-│   │       ├── examples/             ← Example: correct code
-│   │       └── bugs/                 ← Test: buggy code
-│   ├── stress/                       ← Stress testing (100+ issues)
+│   │   ├── build.gradle              ← App-level Gradle config
+│   │   └── src/main/
+│   │       ├── AndroidManifest.xml
+│   │       ├── java/com/test/
+│   │       │   ├── examples/         ← Correct code examples
+│   │       │   │   ├── SafeActivity.kt
+│   │       │   │   └── ProperViewModel.kt
+│   │       │   └── bugs/             ← Buggy code for testing
+│   │       │       ├── 001-npe/
+│   │       │       │   └── ForceUnwrapActivity.kt
+│   │       │       ├── 002-handler-leak/
+│   │       │       │   └── LeakyActivity.kt
+│   │       │       └── 003-async-task/
+│   │       │           └── AsyncTaskLeakActivity.kt
+│   │       └── res/                  ← Minimal resources
+│   │           └── values/strings.xml
 │   └── .claude/                      ← ⚠️ Must be empty or not exist
 │
 ├── test-cases/                       ← Standalone .kt test files
@@ -43,6 +58,7 @@ claude-code-for-android/              ← Git repository root
 │
 ├── scripts/
 │   ├── verify-isolation.sh           ← NEW: Check isolation
+│   ├── verify-build.sh               ← NEW: Verify project compilation
 │   ├── run-review.sh                 ← Enhanced: Auto-verify
 │   ├── verify-plugin.sh              ← Enhanced: Auto-verify
 │   └── publish-plugin.sh
@@ -140,7 +156,10 @@ Developing a new detection rule:
 6. Real environment test (optional, for complex rules)
    └─ cd test-android/ && write bug code & test
 
-7. Publish when done
+7. Verify compilation ⭐️ NEW
+   └─ ./scripts/verify-build.sh
+
+8. Publish when done
    └─ ./scripts/publish-plugin.sh
 ```
 
@@ -221,6 +240,76 @@ test-android/
 ```bash
 cd test-android/
 /android-code-review --target file:app/src/main/java/com/test/bugs/001/HandlerLeakActivity.kt
+
+# After review and fixes, verify compilation
+cd ../
+./scripts/verify-build.sh
+```
+
+**Real Project Configuration:**
+
+The test-android project is a fully compilable Android project with minimal configuration:
+
+```gradle
+// build.gradle (Project level)
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.1.0'
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+```
+
+```gradle
+// app/build.gradle (App level)
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace 'com.test'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.test"
+        minSdk 21
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.11.0'
+}
 ```
 
 ---
@@ -294,6 +383,89 @@ exit 0
 - `--quiet` mode for script integration
 - Clear error messages
 - Standard exit codes
+
+---
+
+#### **verify-build.sh** (NEW)
+
+Verifies that the test Android project compiles successfully.
+
+```bash
+#!/bin/bash
+# Verify test Android project can compile
+# Does NOT use AI, directly calls Gradle
+
+set -e
+
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+TEST_PROJECT="$PROJECT_ROOT/test-android"
+
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+echo "🔨 Verifying Android Project Build"
+echo "=================================="
+echo ""
+
+if [ ! -d "$TEST_PROJECT" ]; then
+    echo -e "${RED}❌ Test project not found: $TEST_PROJECT${NC}"
+    exit 1
+fi
+
+cd "$TEST_PROJECT"
+
+if [ ! -f "gradlew" ]; then
+    echo -e "${YELLOW}⚠️  Gradle wrapper not found${NC}"
+    echo "Attempting to build with system gradle..."
+    GRADLE_CMD="gradle"
+else
+    GRADLE_CMD="./gradlew"
+fi
+
+echo "Project: $(pwd)"
+echo "Gradle: $GRADLE_CMD"
+echo ""
+
+echo -e "${YELLOW}Building project...${NC}"
+echo ""
+
+if $GRADLE_CMD assembleDebug --console=plain 2>&1; then
+    echo ""
+    echo -e "${GREEN}✅ Build SUCCESS${NC}"
+    echo ""
+    echo "The test project compiles successfully."
+    echo "Plugin review results are validated."
+    exit 0
+else
+    echo ""
+    echo -e "${RED}❌ Build FAILED${NC}"
+    echo ""
+    echo "Possible reasons:"
+    echo "  1. Code has actual errors (plugin was right)"
+    echo "  2. Code has intentional bugs for testing"
+    echo "  3. Gradle configuration issues"
+    exit 1
+fi
+```
+
+**Purpose:**
+- ✅ Validates code compiles after AI review
+- ✅ Detects plugin false positives (plugin says bug, but code compiles)
+- ✅ Reduces AI token usage (script runs Gradle, not AI)
+- ✅ Provides build verification for test cases
+
+**Usage:**
+```bash
+# After AI review and code fixes
+./scripts/verify-build.sh
+```
+
+**Features:**
+- Uses Gradle wrapper if available, falls back to system gradle
+- Clear success/failure messages
+- Helps identify false positives
 
 ---
 
@@ -478,16 +650,33 @@ Publish (when all tests pass)
 
 ## Implementation Checklist
 
+### Scripts
 - [ ] Create `scripts/verify-isolation.sh`
+- [ ] Create `scripts/verify-build.sh` ⭐️ NEW
 - [ ] Enhance `scripts/run-review.sh` with auto-verify
 - [ ] Enhance `scripts/verify-plugin.sh` with auto-verify
-- [ ] Create `test-android/` project structure
-- [ ] Create `test-android/stress/` directories
-- [ ] Update `DEVELOPMENT.md`
-- [ ] Create `test-android/README.md`
-- [ ] Create `test-android/stress/README.md`
-- [ ] Create `scripts/README.md`
 - [ ] Create `scripts/archive-test.sh`
+- [ ] Create `scripts/README.md`
+
+### Test Android Project (Real, Compilable)
+- [ ] Create `test-android/` with full project structure
+- [ ] Create `build.gradle` (project level)
+- [ ] Create `app/build.gradle` (app level)
+- [ ] Create `settings.gradle`
+- [ ] Create `AndroidManifest.xml`
+- [ ] Create `app/src/main/java/com/test/examples/` with correct code
+- [ ] Create `app/src/main/java/com/test/bugs/001-npe/` test case
+- [ ] Create `app/src/main/java/com/test/bugs/002-handler-leak/` test case
+- [ ] Create `app/src/main/res/values/strings.xml`
+- [ ] Create `test-android/README.md`
+
+### Stress Testing
+- [ ] Create `test-android/stress/` directories
+- [ ] Create `test-android/stress/001-small-batch/` (10 files, 20 issues)
+- [ ] Create `test-android/stress/README.md`
+
+### Documentation
+- [ ] Update `DEVELOPMENT.md` with build verification workflow
 - [ ] Create `docs/workflows/development-cycle.md`
 
 ---
@@ -496,11 +685,23 @@ Publish (when all tests pass)
 
 - ✅ Plugin isolation works correctly
 - ✅ All scripts auto-verify isolation
+- ✅ Test Android project compiles successfully
+- ✅ `verify-build.sh` validates compilation
 - ✅ Three-tier testing system functional
 - ✅ Stress testing validates performance
 - ✅ Archive management organized
 - ✅ Documentation clear and complete
 - ✅ Error handling comprehensive
+
+---
+
+## Key Benefits of Updated Design
+
+1. **Real Validation**: Code must actually compile, not just pass AI review
+2. **False Positive Detection**: Build success + AI warning = potential false positive
+3. **Token Efficiency**: Script runs Gradle, not AI → fewer tokens
+4. **True Android Context**: Real project structure with R files, BuildConfig
+5. **Practical Testing**: Validates plugin in realistic environment
 
 ---
 
