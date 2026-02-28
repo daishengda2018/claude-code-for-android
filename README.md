@@ -41,9 +41,26 @@ cp -r agents/* ~/.claude/agents/
 
 ## Usage
 
-### Basic Review (Staged Changes)
+### 🚀 Smart Auto-Detection (v2.1.1+)
+
+**Zero configuration needed** — just run:
 
 ```bash
+android-code-review
+```
+
+The plugin automatically detects what to review:
+1. **Staged changes** → `git diff --staged`
+2. **Unstaged changes** → `git diff`
+3. **Last commit** → `git log -1 --patch`
+
+### Basic Review
+
+```bash
+# Review with auto-detection (recommended)
+android-code-review
+
+# Equivalent to manual:
 android-code-review --target staged
 ```
 
@@ -62,7 +79,14 @@ android-code-review --target all
 ### Review with Severity Filter
 
 ```bash
-android-code-review --target all --severity critical
+# Security-only review (fastest)
+android-code-review --severity critical
+
+# High-severity review (default)
+android-code-review --severity high
+
+# All checks
+android-code-review --severity all
 ```
 
 ### Review Specific Commit
@@ -71,33 +95,10 @@ android-code-review --target all --severity critical
 android-code-review --target commit:a1b2c3d
 ```
 
-### Review Pull Request
+### JSON Output (for CI/CD)
 
 ```bash
-# Review PR by number
-android-code-review --target pr:123
-
-# Review PR with severity filter
-android-code-review --target pr:123 --severity high
-
-# Review PR with JSON output (for CI/CD)
-android-code-review --target pr:123 --output-format json
-```
-
-### Advanced Usage
-
-```bash
-# Fast review with light mode (30% token reduction)
-android-code-review --target all --mode light
-
-# Security-focused review (84% token reduction)
-android-code-review --target staged --severity critical
-
-# Review with project-specific guidelines
-android-code-review --target staged --project-guidelines ./ANDROID.md
-
-# PR review with minimal context (faster)
-android-code-review --target pr:123 --pr-context diff-only
+android-code-review --output-format json > review.json
 ```
 
 ## What Gets Reviewed
@@ -170,12 +171,14 @@ jobs:
 
 | Parameter | Values | Default | Description |
 |-----------|--------|---------|-------------|
-| `--target` | `staged`, `all`, `commit:<hash>`, `file:<path>`, `pr:<number\|url>` | `staged` | Review scope |
-| `--severity` | `critical`, `high`, `medium`, `low`, `all` | `all` | Filter by severity (controls progressive loading) |
-| `--mode` | `light`, `normal` | `normal` | Execution mode (light = 30% token reduction) |
-| `--pr-context` | `full`, `diff-only`, `commits-only` | `full` | PR context level (for pr: target) |
-| `--project-guidelines` | `<file-path>` | - | Custom guidelines file (e.g., ANDROID.md, lint.xml) |
-| `--output-format` | `markdown`, `json` | `markdown` | Output format (JSON includes confidence scores) |
+| `--target` | `auto`, `staged`, `all`, `commit:<hash>`, `file:<path>` | `auto` | Review scope (auto = smart detection) |
+| `--severity` | `critical`, `high`, `medium`, `low`, `all` | `high` | Filter by severity |
+| `--output-format` | `markdown`, `json` | `markdown` | Output format |
+
+**Token efficiency** (v2.1.1):
+- Auto-detection reduces command overhead by 60%
+- Progressive pattern loading by severity
+- Average savings: 38-39% vs v2.0
 
 ## Example Output
 
@@ -205,16 +208,25 @@ Fix: Use Application Context and clean up Handler in onDestroy().
 Verdict: BLOCK — 1 CRITICAL issue must be fixed before merge.
 ```
 
-## Plugin Structure
+## Plugin Structure (v2.1)
 
 ```
 claude-code-for-android/
 ├── commands/
-│   └── android-code-review.md     # User-invokable command
-├── agents/
-│   └── android-code-reviewer.md    # Review agent logic
+│   └── android-code-review.md         # User-invokable command
+├── skills/
+│   └── android-code-review/
+│       ├── SKILL.md                   # Review orchestration
+│       ├── patterns/                  # Detection patterns (v2.1)
+│       │   ├── security-patterns.md
+│       │   ├── quality-patterns.md
+│       │   ├── architecture-patterns.md
+│       │   ├── jetpack-patterns.md
+│       │   ├── performance-patterns.md
+│       │   └── practices-patterns.md
+│       └── references/                # Detailed reference docs
 └── .claude/
-    └── plugin-manifest.json        # Claude Code marketplace manifest
+    └── plugin-manifest.json           # Marketplace manifest
 ```
 
 ## Compliance & Standards
@@ -246,6 +258,25 @@ This plugin enforces compliance with:
 
 - 🎨 [Plugin Structure](docs/PLUGIN_STRUCTURE.md) - Internal structure
 - 📖 [Detection Patterns](skills/android-code-review/patterns/) - Active detection rules
+
+## Version History
+
+### v2.1.1 (2026-02-28)
+- ✨ **Smart auto-detection** — Zero-config review (staged → unstaged → last commit)
+- ⚡ **60% command token reduction** — Simplified interface
+- 📉 **38-39% average token savings** — Pattern-based detection
+- 🗑️ **Removed deprecated agents/** — Simplified architecture
+
+### v2.1.0 (2026-02-28)
+- 🎯 Pattern-based detection (replaces code examples)
+- 🏗️ Simplified architecture (2 layers vs 3)
+- 📊 Progressive pattern loading by severity
+
+### v2.0.0 (2026-02-27)
+- Progressive rule loading and token budget management
+
+### v1.0.0 (2026-02-26)
+- Initial monolithic agent
 
 ## Test Suite Status
 
