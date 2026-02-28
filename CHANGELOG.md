@@ -14,13 +14,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.1.1] - 2026-02-28
 
+### Added
+- **Smart auto-detection** — Zero-configuration review (staged → unstaged → last commit)
+- **Token optimization metrics** — Measured data: 38-39% average reduction
+  - Critical severity: 28% reduction
+  - High severity: 39% reduction
+  - All severity: 41% reduction
+- **Marketplace keywords** — Added `automation` and `token-optimization` for better discoverability
+
 ### Changed
-- Simplified command interface with smart auto-detection
-- Improved documentation structure
+- **Command interface** — `--target` parameter now optional (defaults to `auto`)
+- **Simplified command** — Reduced token usage by 59% (1,745 bytes vs 4,255 bytes)
+- **Pattern-based detection** — Replaces verbose code examples (38-39% token savings)
+- **Version management** — Upgraded from `2.1.0-beta` to stable `2.1.1`
+- **Documentation** — Enhanced README.md and README_ZH.md with v2.1.1 features
 
 ### Fixed
-- Corrected token usage data inconsistencies (28-41% reduction, not 40-50%)
-- Fixed execution logic documentation alignment
+- **Token data accuracy** — Corrected from estimated 40-50% to measured 38-39%
+- **Plugin manifest** — Removed empty `agents: []` field (aligns with v2.1 architecture)
+- **Documentation consistency** — Aligned all files with measured token reduction data
+- **Version synchronization** — Ensured plugin-manifest.json and marketplace.json match
+
+### Technical Details
+- Command token reduction: 60% (simplified interface)
+- Pattern token reduction: 38-39% average (measured across severity levels)
+- Architecture: 2-layer (Command → Skill), removed separate Agent layer
+- Auto-detection priority: staged changes → unstaged changes → last commit
 
 ## [2.1.0] - 2026-02-28
 
