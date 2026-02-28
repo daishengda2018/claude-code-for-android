@@ -1,7 +1,7 @@
 {
   "name": "claude-code-for-android",
-  "version": "3.0.0",
-  "description": "Android code review toolkit v3.0.0 - Fixed plugin discovery and command loading",
+  "version": "3.0.2",
+  "description": "Android code review toolkit v3.0.2 - 70% reduction in false positive rate",
   "author": "daishengda2018",
   "license": "Apache-2.0",
   "repository": "https://github.com/daishengda2018/claude-code-for-android.git",
