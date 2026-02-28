@@ -226,17 +226,28 @@ This plugin enforces compliance with:
 - [Kotlin Style Guide for Android](https://developer.android.com/kotlin/style-guide)
 - Jetpack Compose [Performance & Best Practices](https://developer.android.com/jetpack/compose/performance)
 
-## Development Documentation
+## Documentation
 
-Want to contribute or understand the internal implementation? Check out:
+**Quick Start**: [User Guide](docs/guides/USER_GUIDE.md)
 
-- 📖 [User Guide](docs/USER_GUIDE.md) - Complete usage guide with test suite
+### For Users
+
+- 📖 [User Guide](docs/guides/USER_GUIDE.md) - Complete usage guide with test suite
+- 📋 [All Documentation](docs/) - Browse all docs
+
+### For Contributors
+
+- 🔧 [Contributing](CONTRIBUTING.md) - Contribution guidelines
 - 📖 [Development Guide](DEVELOPMENT.md) - Plugin development guide
-- 🎨 [Architecture Design](docs/2026-02-27-android-test-project-integration-design.md) - System architecture
-- 🔄 [Development Workflow](docs/workflows/development-cycle.md) - Development cycle
-- 📊 [Plugin Structure](docs/PLUGIN_STRUCTURE.md) - Internal structure
-- 📋 [Reference Documentation](docs/reference/) - Detection patterns and rules
-- 📄 [Verification Reports](docs/reports/) - Test results and validation
+- 🔄 [Development Workflow](docs/guides/development/development-cycle.md) - Development cycle
+- 📊 [Contributing Standards](CONTRIBUTING_STANDARDS.md) - Coding standards
+
+### Architecture & Reference
+
+- 🎨 [Plugin Structure](docs/PLUGIN_STRUCTURE.md) - Internal structure
+- 📖 [Detection Patterns](skills/android-code-review/patterns/) - Active detection rules
+- 📋 [Rule Reference](docs/reference/) - Detailed rule documentation
+- 📄 [Test Reports](docs/reports/) - Test results and validation
 
 ## Test Suite Status
 
