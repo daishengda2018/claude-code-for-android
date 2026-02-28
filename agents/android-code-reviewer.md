@@ -2,7 +2,6 @@
 name: android-code-reviewer
 description: Senior Android code review specialist. Reviews Kotlin/Java code for architecture, lifecycle safety, threading, performance, and security.
 tools: ["Read", "Grep", "Glob"]
-model: sonnet
 ---
 # Android Code Reviewer
 

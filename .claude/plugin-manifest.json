@@ -1,7 +1,7 @@
 {
   "name": "claude-code-for-android",
-  "version": "3.0.3",
-  "description": "Android code review toolkit v3.0.3 - Fixed severity default and raised confidence to 90%",
+  "version": "3.0.4",
+  "description": "Android code review toolkit v3.0.4 - Removed hardcoded model, compatible with all providers",
   "author": "daishengda2018",
   "license": "Apache-2.0",
   "repository": "https://github.com/daishengda2018/claude-code-for-android.git",
