@@ -1,8 +1,8 @@
 {
   "manifestVersion": "1.0",
   "name": "claude-code-for-android",
-  "version": "2.0.0-alpha",
-  "description": "Android code review toolkit - automated quality, security, and performance checks for Kotlin/Java code",
+  "version": "2.1.0-beta",
+  "description": "Android code review toolkit v2.1 - Token-optimized, pattern-based detection for Kotlin/Java code",
   "author": "daishengda2018",
   "license": "Apache-2.0",
   "repository": {
@@ -11,7 +11,7 @@
   },
   "capabilities": {
     "commands": ["android-code-review"],
-    "agents": ["android-code-reviewer"]
+    "agents": []
   },
   "installation": {
     "type": "marketplace",

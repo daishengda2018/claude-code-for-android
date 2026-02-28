@@ -6,18 +6,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a **Claude Code plugin** for automated Android code review. It provides:
 - `/android-code-review` command - User-facing command for reviewing code
-- `android-code-reviewer` agent - AI agent that performs the actual code analysis
+- `android-code-review` skill - Pattern-based detection system with progressive rule loading
 
-**Plugin Architecture:**
+**Plugin Architecture (v2.1 - Simplified):**
 ```
 User runs: /android-code-review --target file:app/src/main/java/...
        ↓
-Command invokes: android-code-reviewer agent
+Command loads: android-code-review skill
        ↓
-Agent analyzes: Kotlin/Java code using Read/Grep/Glob tools
+Skill applies: Pattern-based detection (Security, Quality, Architecture, etc.)
        ↓
-Agent outputs: Structured review findings with severity levels
+Skill outputs: Structured review findings with confidence scores
 ```
+
+**Key Changes in v2.1:**
+- **Token Optimization**: 40-50% reduction through pattern-based detection
+- **Simplified Architecture**: Agent logic merged into skill (2 layers instead of 3)
+- **Pattern Library**: Detection patterns replace code examples
+- **Caching**: Pattern caching for multi-file reviews
 
 ## Critical Constraint: Plugin Isolation
 
@@ -92,10 +98,23 @@ In Claude Code, run directly:
 ```
 
 ### 3. Modify Plugin Detection Rules
-Edit `agents/android-code-reviewer.md` or `skills/android-code-review/SKILL.md`:
-- Add new patterns to Review Checklist sections
-- Update code examples
+**v2.1 Architecture**:
+- Edit `skills/android-code-review/patterns/*.md` to add/modify detection patterns
+- Edit `skills/android-code-review/SKILL.md` to change orchestration logic
 - **⚠️ Restart Claude Code after changes**
+
+**Pattern Format**:
+```markdown
+## RULE-ID: Rule Name
+
+### Detection Patterns
+- Pattern 1: Description
+- Pattern 2: Description
+
+### Fix Suggestions
+1. Recommendation 1
+2. Recommendation 2
+```
 
 ### 4. Verify in Real Project
 ```bash
@@ -136,12 +155,25 @@ These configs serve as reference for what the plugin should detect.
 ```
 claude-code-for-android/
 ├── .claude/                          # Plugin source (development version)
-│   ├── agents/
-│   │   └── android-code-reviewer.md  # ⚠️ Main plugin logic - edit this
-│   └── plugin-manifest.json
+│   └── plugin-manifest.json          # Plugin metadata
 │
 ├── commands/
 │   └── android-code-review.md        # User-facing command interface
+│
+├── skills/
+│   └── android-code-review/
+│       ├── SKILL.md                  # ⚠️ Main orchestration layer - edit this
+│       ├── patterns/                 # ⚠️ Detection patterns - edit these
+│       │   ├── security-patterns.md
+│       │   ├── quality-patterns.md
+│       │   ├── architecture-patterns.md
+│       │   ├── jetpack-patterns.md
+│       │   ├── performance-patterns.md
+│       │   └── practices-patterns.md
+│       └── references/               # Legacy detailed references (kept for reference)
+│           ├── sec-001-to-010-security.md
+│           ├── qual-001-to-010-quality.md
+│           └── ...
 │
 ├── scripts/                          # Automation tools
 │   ├── verify-isolation.sh           # Verify test-android/.claude/ is empty
@@ -174,6 +206,7 @@ claude-code-for-android/
 4. **Real Project:** `test-android/` is a compilable Android project (not lightweight mock)
 5. **Build Verification:** Always run `verify-build.sh` after AI suggests fixes
 6. **Plugin Isolation:** `verify-isolation.sh` auto-runs before review scripts
+7. **v2.1 Optimization:** Use patterns/ instead of references/ for token efficiency
 
 ## Testing Categories
 
@@ -185,6 +218,17 @@ The plugin detects issues in these categories:
 - **Performance:** ANR risks, layout inefficiencies, bitmap mismanagement
 - **Best Practices:** Naming conventions, documentation, accessibility
 
+## Token Usage (v2.1 Optimized)
+
+| Severity | Token Cost | Optimization |
+|----------|------------|--------------|
+| `critical` | ~1,500 | Security patterns only |
+| `high` | ~6,900 | Security + Quality + Architecture + Jetpack |
+| `medium` | ~8,100 | Above + Performance |
+| `all` | ~8,900 | All patterns including Best Practices |
+
+**Total reduction:** ~40-50% compared to v2.0
+
 ## Documentation
 
 - **DEVELOPMENT.md:** Full development guide (English)
@@ -192,3 +236,7 @@ The plugin detects issues in these categories:
 - **README.md:** User-facing documentation
 - **docs/plans/2026-02-27-android-test-project-integration-design.md:** Architecture design
 - **docs/workflows/development-cycle.md:** Complete development cycle workflow
+- **docs/reviews/2026-02-28-plugin-architecture-review.md:** v2.1 optimization review
+
+# currentDate
+Today's date is 2026-02-28.

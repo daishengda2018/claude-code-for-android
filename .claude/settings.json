@@ -5,7 +5,8 @@
       "Bash(./scripts/*)",
       "Read(*)",
       "Grep(*)",
-      "Glob(*)"
+      "Glob(*)",
+      "Bash(python3:*)"
     ],
     "additionalDirectories": [
       "skills/android-code-review/references"
