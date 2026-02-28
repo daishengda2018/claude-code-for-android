@@ -1,13 +1,14 @@
 {
   "permissions": {
     "allow": [
-      "Bash(.gitignore:*)",
-      "Read(~/.claude/plugins/cache/claude-plugins-official/superpowers/4.2.0/skills/subagent-driven-development/**)",
-      "Bash(timeout 10 /android-code-review --target file:test-cases/004-hardcoded-api-key.kt --severity critical)",
-      "Bash(python3:*)"
+      "Bash(git *)",
+      "Bash(./scripts/*)",
+      "Read(*)",
+      "Grep(*)",
+      "Glob(*)"
     ],
     "additionalDirectories": [
-      ".claude/references"
+      "skills/android-code-review/references"
     ]
   }
 }
