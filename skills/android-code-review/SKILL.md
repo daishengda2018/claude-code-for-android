@@ -12,6 +12,12 @@ You will receive:
 - **Files to review** (provided by Command)
 - **Severity threshold** (critical | high | medium | all)
 
+## Default Value Handling
+
+If `severity` parameter is not provided or is empty, default to `"high"`:
+- This ensures consistent behavior when command is invoked without `--severity` flag
+- Fallback prevents accidental loading of all patterns (which would be ~8,900 tokens)
+
 ## Severity-Based Pattern Loading
 
 Load detection rules based on severity:
@@ -110,7 +116,7 @@ After loading appropriate patterns, invoke `android-code-reviewer` agent with:
 The agent will:
 - Read and analyze the provided files
 - Apply the loaded detection rules
-- Filter findings by confidence (>85%)
+- Filter findings by confidence (>90%)
 - Output structured findings in the required format
 
 ## Output Format

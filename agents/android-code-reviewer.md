@@ -85,9 +85,9 @@ fun backgroundProcess() {
 
 ## Step 3: Filter by Confidence
 
-**CRITICAL: >85% confidence threshold**
+**CRITICAL: >90% confidence threshold**
 
-Only report issues you are **>85% confident** are real problems:
+Only report issues you are **>90% confident** are real problems:
 
 **Report**:
 - ✅ Clear violations (e.g., hardcoded API key, missing null check)

@@ -222,7 +222,7 @@ claude-code-for-android/
 ## Key Development Notes
 
 1. **TDD Approach:** Write test cases first, then implement detection logic
-2. **Confidence Threshold:** Only report issues >80% confidence (reduce noise)
+2. **Confidence Threshold:** Only report issues >90% confidence (reduce noise)
 3. **Restart Required:** Plugin changes require restarting Claude Code
 4. **Real Project:** `test-android/` is a compilable Android project (not lightweight mock)
 5. **Build Verification:** Always run `verify-build.sh` after AI suggests fixes

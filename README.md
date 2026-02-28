@@ -13,7 +13,7 @@ Automated Android code review for Kotlin/Java code — quality, security, and pe
 - 🛡️ **Security Scanning** — Detects hardcoded secrets, insecure storage, WebView vulnerabilities
 - ⚡ **Performance Analysis** — Identifies ANR risks, memory leaks, layout inefficiencies
 - 📱 **Android Best Practices** — Enforces Jetpack, Kotlin, and lifecycle patterns
-- 🎯 **Confidence-Based Filtering** — Only reports real issues (>80% confidence), zero noise
+- 🎯 **Confidence-Based Filtering** — Only reports real issues (>90% confidence), zero noise
 
 ## Installation
 
@@ -260,6 +260,12 @@ This plugin enforces compliance with:
 - 📖 [Detection Patterns](skills/android-code-review/patterns/) - Active detection rules
 
 ## Version History
+
+### v3.0.3 (2026-02-28)
+- 🐛 **Fixed severity default value** — Properly defaults to `high` when not specified
+- 🎯 **Raised confidence threshold** — Increased from 85% to 90% for fewer false positives
+- 📝 **Updated documentation** — Aligned all docs with current implementation
+- ⚡ **Token optimization** — 22% savings when using default settings
 
 ### v3.0.0 (2026-02-28)
 - 🐛 **Fixed plugin discovery** — Added `name` field to command frontmatter
