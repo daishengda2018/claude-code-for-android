@@ -5,9 +5,10 @@ Complete documentation for the Android Code Review plugin.
 ## 📚 For Users
 
 - **[User Guide](guides/USER_GUIDE.md)** - Complete usage guide
-  - Installation instructions
-  - Command usage
-  - Test suite overview
+- **[Code Examples](examples/)** - Real-world before/after examples
+  - Security issues and fixes
+  - Memory leaks and solutions
+  - Best practices
 
 ## 🔧 For Contributors
 
@@ -16,9 +17,11 @@ Complete documentation for the Android Code Review plugin.
 - **[Development Workflow](guides/development/development-cycle.md)** - Development cycle
 - **[Contributing Standards](../CONTRIBUTING_STANDARDS.md)** - Coding standards
 
-## 🏗️ Architecture
+## 🏗️ Architecture & Design
 
+- **[Design Philosophy](DESIGN.md)** - Core design decisions and rationale
 - **[Plugin Structure](PLUGIN_STRUCTURE.md)** - Internal architecture
+- **[v2.1 Optimization](OPTIMIZATION.md)** - Token optimization summary
 - **[Detection Patterns](../skills/android-code-review/patterns/)** - Active detection rules
 
 ## 🌍 Translations
@@ -29,11 +32,11 @@ Complete documentation for the Android Code Review plugin.
 
 ## 📦 Archive
 
-Historical documentation (kept for reference):
+Historical documentation:
 - [Archive](archive/) - Design documents and implementation notes
 
 ---
 
 **Last Updated**: 2026-02-28
-**Plugin Version**: v2.1.0-beta
-**Total Docs**: 8 files (simplified from 31)
+**Plugin Version**: v2.1.1
+**Total Docs**: 11 files (simplified from 31, with key additions)
