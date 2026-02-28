@@ -246,8 +246,6 @@ This plugin enforces compliance with:
 
 - 🎨 [Plugin Structure](docs/PLUGIN_STRUCTURE.md) - Internal structure
 - 📖 [Detection Patterns](skills/android-code-review/patterns/) - Active detection rules
-- 📋 [Rule Reference](docs/reference/) - Detailed rule documentation
-- 📄 [Test Reports](docs/reports/) - Test results and validation
 
 ## Test Suite Status
 
@@ -260,8 +258,6 @@ This plugin enforces compliance with:
 | Quality (NPE) | ✅ Verified | Force unwrap, unsafe nullable |
 
 **Overall:** 100% detection accuracy on 9 test cases | 0% false positive rate
-
-Run tests: `./scripts/batch-validate-reviews.sh`
 
 ## Contributing
 
