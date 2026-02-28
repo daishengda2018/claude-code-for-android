@@ -5,14 +5,14 @@
     "email": "daishengda2018@users.noreply.github.com"
   },
   "metadata": {
-    "description": "Android code review toolkit - automated quality, security, and performance checks for Kotlin/Java code"
+    "description": "Android code review toolkit v2.1.1 - Smart auto-detection with token optimization for Kotlin/Java code"
   },
   "plugins": [
     {
       "name": "claude-code-for-android",
-      "version": "2.0.0-alpha",
+      "version": "2.1.1",
       "source": "./",
-      "description": "Android code review toolkit with specialized agent and command for comprehensive Kotlin/Java code analysis",
+      "description": "Android code review toolkit v2.1.1 - Smart auto-detection with 60% token reduction and 38-39% average savings",
       "author": {
         "name": "daishengda2018"
       },
@@ -26,7 +26,9 @@
         "code-review",
         "security",
         "performance",
-        "quality"
+        "quality",
+        "automation",
+        "token-optimization"
       ],
       "category": "code-review",
       "tags": [
@@ -37,7 +39,8 @@
         "code-review",
         "security",
         "performance",
-        "testing"
+        "testing",
+        "v2.1.1"
       ]
     }
   ]
