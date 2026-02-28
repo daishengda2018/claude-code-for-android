@@ -30,7 +30,11 @@ This skill now includes the agent logic directly (no separate agent file):
 
 2. **Understand scope** — Identify files, intent, and Android components (Activities, Fragments, ViewModels, Composables).
 
-3. **Read surrounding code** — Don't review in isolation. Read full files for dependencies and lifecycle.
+3. **Read surrounding code** — Don't review in isolation. Read changed file sections with context:
+   - **For small files (<200 lines)**: Read entire file
+   - **For medium files (200-500 lines)**: Read changed sections ±50 lines
+   - **For large files (>500 lines)**: Read changed sections ±30 lines only
+   - **Always read**: Related files (dependencies, lifecycle components)
 
 4. **Load patterns** — Based on `--severity` parameter, load only relevant pattern files:
    - `critical` → `patterns/security-patterns.md` only (~1,500 tokens)
@@ -68,7 +72,7 @@ Match your focus to commit intent:
 
 **Loading Strategy**: Load only the pattern files needed for the requested severity level.
 
-**Optimization**: Patterns use detection rules instead of code examples, reducing token usage by 40-50%.
+**Optimization**: Patterns use detection rules instead of code examples, reducing token usage by 38-39% average (28-41% depending on severity).
 
 ---
 
@@ -310,7 +314,7 @@ Check for project-specific configuration files:
 - **v2.1** (2026-02-28): **Major Token Optimization**
   - Introduced pattern-based detection (replaces code examples)
   - Merged agent logic into skill (simplified architecture)
-  - Reduced token usage by 40-50%
+  - Reduced token usage by 38-39% average (measured: critical 28%, high 39%, all 41%)
   - Added pattern caching for multi-file reviews
 
 - **v2.0** (2026-02-27): Progressive rule loading and token budget management
@@ -330,7 +334,7 @@ Check for project-specific configuration files:
 | **Total (high)** | ~15,500 | ~9,700 | **-37%** |
 
 **Key Changes**:
-1. Pattern-based detection replaces code examples (40-50% reduction)
+1. Pattern-based detection replaces code examples (38-39% average reduction)
 2. Agent merged into Skill (simplified architecture)
 3. Caching strategy for multi-file reviews
 4. More efficient severity-based loading

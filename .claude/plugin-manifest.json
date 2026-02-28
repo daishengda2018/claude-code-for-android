@@ -10,8 +10,7 @@
     "url": "https://github.com/daishengda2018/claude-code-for-android.git"
   },
   "capabilities": {
-    "commands": ["android-code-review"],
-    "agents": []
+    "commands": ["android-code-review"]
   },
   "installation": {
     "type": "marketplace",

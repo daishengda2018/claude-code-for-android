@@ -20,7 +20,7 @@ Skill outputs: Structured review findings with confidence scores
 ```
 
 **Key Changes in v2.1:**
-- **Token Optimization**: 40-50% reduction through pattern-based detection
+- **Token Optimization**: 38-39% reduction (measured: 28-41% depending on severity)
 - **Simplified Architecture**: Agent logic merged into skill (2 layers instead of 3)
 - **Pattern Library**: Detection patterns replace code examples
 - **Caching**: Pattern caching for multi-file reviews
@@ -208,6 +208,16 @@ claude-code-for-android/
 6. **Plugin Isolation:** `verify-isolation.sh` auto-runs before review scripts
 7. **v2.1 Optimization:** Use patterns/ instead of references/ for token efficiency
 
+## Future Capabilities (Reserved Permissions
+
+The plugin includes `python3:*` permission in `.claude/settings.json` for future features:
+
+- **Automated test report generation** - Parse test results and generate summary reports
+- **Statistical data visualization** - Create charts from code quality metrics
+- **Performance metrics analysis** - Analyze token usage and performance patterns
+
+**Current Status (v2.1):** This permission is reserved but not actively used.</think><tool_call>TodoWrite<arg_key>todos</arg_key><arg_value>[{"activeForm": "校验执行逻辑", "content": "校验 android-code-review 执行逻辑", "status": "in_progress"}, {"activeForm": "修正文档数据不一致", "content": "修正文档中的 40-50% 数据不一致问题", "status": "completed"}, {"activeForm": "清理 plugin-manifest.json", "content": "清理 plugin-manifest.json 的 agents 字段", "status": "completed"}, {"activeForm": "添加 Python 权限说明", "content": "添加 Python 权限说明文档", "status": "completed"}]
+
 ## Testing Categories
 
 The plugin detects issues in these categories:
@@ -227,7 +237,7 @@ The plugin detects issues in these categories:
 | `medium` | ~8,100 | Above + Performance |
 | `all` | ~8,900 | All patterns including Best Practices |
 
-**Total reduction:** ~40-50% compared to v2.0
+**Total reduction:** ~38-39% average (measured: critical 28%, high 39%, all 41%)
 
 ## Documentation
 
