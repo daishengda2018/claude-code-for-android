@@ -155,9 +155,18 @@ done
 
 ### 6. Release
 
-```bash
-./scripts/publish-plugin.sh
-```
+**⚠️ MANDATORY: Follow RELEASE-CHECKLIST.md before any release**
+
+Before creating git tags or GitHub releases, you MUST verify:
+
+1. **Version Files Updated** - All version files have consistent version numbers:
+   ```bash
+   grep -h '"version"' .claude/plugin-manifest.json .claude-plugin/plugin.json .claude-plugin/marketplace.json
+   ```
+2. **Code Committed** - All changes are committed
+3. **Tag Points to HEAD** - Tag must be created at the latest commit
+
+See [RELEASE-CHECKLIST.md](./RELEASE-CHECKLIST.md) for complete release procedure.
 
 ## Static Analysis Configurations
 
