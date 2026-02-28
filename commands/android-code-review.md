@@ -1,4 +1,5 @@
 ---
+name: android-code-review
 description: Android PR & commit review — lifecycle, coroutine, architecture & security focused
 type: command
 
@@ -26,63 +27,73 @@ parameters:
     default: "markdown"
     description: "markdown|json"
 ---
-# Android Code Review
+# Android Code Review Command
 
-Comprehensive Android code review with smart scope detection and severity-based pattern loading.
+This command orchestrates Android code review by collecting files and invoking the skill.
 
-## What This Command Does
+## Execution Flow
 
-1. **Auto-detect scope** — Staged changes → Unstaged changes → Last commit
-2. **Gather context** — Read code files and surrounding context
-3. **Apply patterns** — Severity-based detection rules (CRITICAL/HIGH/MEDIUM)
-4. **Filter findings** — >80% confidence threshold to reduce noise
-5. **Format output** — Structured review with severity levels and fix suggestions
+### Step 1: Collect Files (Git Operations)
 
-## Detection Categories
+Based on `{{target}}` parameter:
 
-**CRITICAL — Production Blockers:**
-
-- NullPointerException risks
-- Fragment lifecycle violations
-- Memory leaks (Handler, BroadcastReceiver, Context)
-- Security vulnerabilities (hardcoded secrets, unsafe storage)
-
-**HIGH — Structural Decay:**
-
-- Long methods (>80 lines)
-- High complexity (>12 cyclomatic)
-- Deep nesting (>4 levels)
-- Duplicated logic
-- Missing error handling
-
-**MEDIUM — Maintainability:**
-
-- Business logic in UI layer
-- Mutable state exposure
-- Missing accessibility
-
-## Parameters
-
-- `--target`: `auto` (default) | `commit:<id>` | `file:<path>` | `pr:<number>`
-- `--severity`: `critical` | `high` (default) | `medium` | `all`
-- `--output-format`: `markdown` (default) | `json`
-
-## Usage
+**auto** (default):
 
 ```bash
-# Review staged changes
-/android-code-review
-
-# Review specific file
-/android-code-review --target file:app/src/main/java/Example.kt
-
-# Review with custom severity
-/android-code-review --severity critical
-
-# Review commit
-/android-code-review --target commit:abc123
+# Check staged changes first
+git diff --staged --quiet
+if [ $? -eq 1 ]; then
+    git diff --staged --name-only
+else
+    # Check unstaged changes
+    git diff --quiet
+    if [ $? -eq 1 ]; then
+        git diff --name-only
+    else
+        # Review last commit
+        git log -1 --patch --name-only
+    fi
+fi
 ```
+
+**commit:`<id>`**:
+
+```bash
+git diff <id>~1..<id> --name-only
+```
+
+**pr:`<number>`**:
+
+```bash
+gh pr diff <number> --name-only
+```
+
+**file:`<path>`**:
+
+```bash
+# Direct file path, no git command needed
+echo "<path>"
+```
+
+### Step 2: Invoke Skill
+
+Pass collected information to skill:
+
+- Files to review (from Step 1)
+- Severity threshold (from `{{severity}}` parameter)
+- Output format (from `{{output-format}}` parameter)
+
+### Step 3: Present Results
+
+Format and display agent findings:
+
+- Severity levels (CRITICAL, HIGH, MEDIUM, LOW)
+- File locations and line numbers
+- Issue descriptions and suggested fixes
+- Review summary table
 
 ## Security Rule
 
-**Never approve code with security vulnerabilities!** Block commit if CRITICAL or HIGH issues found.
+**Never approve code with security vulnerabilities!**
+
+Block commit if CRITICAL or HIGH issues found.

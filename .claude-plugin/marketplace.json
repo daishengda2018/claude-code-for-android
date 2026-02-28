@@ -5,14 +5,14 @@
     "email": "daishengda2018@users.noreply.github.com"
   },
   "metadata": {
-    "description": "Android code review toolkit v2.1.1 - Smart auto-detection with token optimization for Kotlin/Java code"
+    "description": "Android code review toolkit v3.0.0 - Fixed plugin discovery with command name field for Kotlin/Java code"
   },
   "plugins": [
     {
       "name": "claude-code-for-android",
-      "version": "2.1.1",
+      "version": "3.0.0",
       "source": "./",
-      "description": "Android code review toolkit v2.1.1 - Smart auto-detection with 60% token reduction and 38-39% average savings",
+      "description": "Android code review toolkit v3.0.0 - Fixed plugin discovery with command name field",
       "author": {
         "name": "daishengda2018"
       },
@@ -40,7 +40,7 @@
         "security",
         "performance",
         "testing",
-        "v2.1.1"
+        "v3.0.0"
       ]
     }
   ]

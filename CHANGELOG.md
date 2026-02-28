@@ -12,6 +12,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Statistical data visualization
 - Performance metrics analysis
 
+## [3.0.0] - 2026-02-28
+
+### Added
+- **Plugin discovery fix** — Added `name` field to command frontmatter for proper plugin loading
+- **Enhanced command documentation** — Restructured command file with clear execution flow
+- **Plugin manifest** — Added `.claude/plugin-manifest.json` for project-level plugin loading
+
+### Changed
+- **BREAKING**: Plugin directory structure change for v3.0.0 compatibility
+- **Command interface** — Added explicit `name: android-code-review` in frontmatter
+- **Documentation clarity** — Separated execution flow from feature descriptions
+
+### Fixed
+- **Command not found** — Fixed plugin discovery by adding required `name` field
+- **Plugin loading** — Ensured `.claude/plugin-manifest.json` exists for proper plugin registration
+
+### Migration Notes
+This release fixes the critical "command not found" issue. Users must restart Claude Code after upgrading.
+
 ## [2.1.1] - 2026-02-28
 
 ### Added
@@ -89,7 +108,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Basic test suite
 - Documentation
 
-[Unreleased]: https://github.com/daishengda2018/claude-code-for-android/compare/v2.1.1...HEAD
+[Unreleased]: https://github.com/daishengda2018/claude-code-for-android/compare/v3.0.0...HEAD
+[3.0.0]: https://github.com/daishengda2018/claude-code-for-android/compare/v2.1.1...v3.0.0
 [2.1.1]: https://github.com/daishengda2018/claude-code-for-android/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/daishengda2018/claude-code-for-android/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/daishengda2018/claude-code-for-android/compare/v1.0.0...v2.0.0

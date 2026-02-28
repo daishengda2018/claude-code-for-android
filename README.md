@@ -41,12 +41,12 @@ cp -r agents/* ~/.claude/agents/
 
 ## Usage
 
-### 🚀 Smart Auto-Detection (v2.1.1+)
+### 🚀 Smart Auto-Detection (v3.0.0+)
 
 **Zero configuration needed** — just run:
 
 ```bash
-android-code-review
+/android-code-review
 ```
 
 The plugin automatically detects what to review:
@@ -58,35 +58,35 @@ The plugin automatically detects what to review:
 
 ```bash
 # Review with auto-detection (recommended)
-android-code-review
+/android-code-review
 
 # Equivalent to manual:
-android-code-review --target staged
+/android-code-review --target staged
 ```
 
 ### Review Specific File
 
 ```bash
-android-code-review --target file:app/src/main/java/com/example/MyFragment.kt
+/android-code-review --target file:app/src/main/java/com/example/MyFragment.kt
 ```
 
 ### Review All Uncommitted Changes
 
 ```bash
-android-code-review --target all
+/android-code-review --target all
 ```
 
 ### Review with Severity Filter
 
 ```bash
 # Security-only review (fastest)
-android-code-review --severity critical
+/android-code-review --severity critical
 
 # High-severity review (default)
-android-code-review --severity high
+/android-code-review --severity high
 
 # All checks
-android-code-review --severity all
+/android-code-review --severity all
 ```
 
 ### Review Specific Commit
@@ -175,7 +175,7 @@ jobs:
 | `--severity` | `critical`, `high`, `medium`, `low`, `all` | `high` | Filter by severity |
 | `--output-format` | `markdown`, `json` | `markdown` | Output format |
 
-**Token efficiency** (v2.1.1):
+**Token efficiency** (v3.0.0):
 - Auto-detection reduces command overhead by 60%
 - Progressive pattern loading by severity
 - Average savings: 38-39% vs v2.0
@@ -208,7 +208,7 @@ Fix: Use Application Context and clean up Handler in onDestroy().
 Verdict: BLOCK — 1 CRITICAL issue must be fixed before merge.
 ```
 
-## Plugin Structure (v2.1)
+## Plugin Structure (v3.0.0)
 
 ```
 claude-code-for-android/
@@ -260,6 +260,12 @@ This plugin enforces compliance with:
 - 📖 [Detection Patterns](skills/android-code-review/patterns/) - Active detection rules
 
 ## Version History
+
+### v3.0.0 (2026-02-28)
+- 🐛 **Fixed plugin discovery** — Added `name` field to command frontmatter
+- ✨ **Enhanced documentation** — Restructured command file with clear execution flow
+- ⚙️ **Plugin manifest** — Added `.claude/plugin-manifest.json` for proper loading
+- 📝 **Migration note** — Requires Claude Code restart after upgrade
 
 ### v2.1.1 (2026-02-28)
 - ✨ **Smart auto-detection** — Zero-config review (staged → unstaged → last commit)

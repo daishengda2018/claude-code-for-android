@@ -8,6 +8,9 @@
       "Glob(*)",
       "Bash(gh *)",
       "Task(android-code-reviewer)"
+    ],
+    "additionalDirectories": [
+      "/Users/im_dsd/Documents/work_room/claude-code-for-android/.claude-plugin"
     ]
   }
 }
