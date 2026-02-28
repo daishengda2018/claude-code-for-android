@@ -6,17 +6,9 @@ last_updated: 2026-02-28
 
 # Android Code Review v2.1 - Optimized Skill
 
-This skill provides token-efficient Android code review with progressive rule loading and confidence-based filtering.
+Token-efficient Android code review with progressive pattern loading and confidence-based filtering.
 
-## Quick Start
-
-When invoked via `/android-code-review` command:
-
-1. Parse `--severity` parameter to determine which patterns to load
-2. Load pattern files progressively based on severity
-3. Apply confidence filter (≥0.8 threshold)
-4. Report findings using the output format
-5. Cache patterns for subsequent reviews in same session
+**Auto-detection:** When invoked without `--target`, automatically detects: staged changes → unstaged changes → last commit
 
 ---
 
@@ -26,9 +18,20 @@ This skill now includes the agent logic directly (no separate agent file):
 
 ### Review Process
 
-1. **Gather context** — Run `git diff --staged` or `git diff` to see changes. If no diff, check recent commits with `git log --oneline -5`.
+1. **Auto-detect scope** — Smart target detection when `--target=auto` (default):
+   - Check staged changes: `git diff --staged --quiet`
+   - If empty, check unstaged: `git diff --quiet`
+   - If empty, review last commit: `git log -1 --patch`
+   - Otherwise, use explicit `--target` parameter
 
-2. **Understand scope** — Identify files, intent, and Android components (Activities, Fragments, ViewModels, Composables).
+2. **Gather context** — Run appropriate git command based on detected/explicit target:
+   - `staged` → `git diff --staged`
+   - `all` → `git diff`
+   - `commit:<hash>` → `git diff <hash>~1..<hash>`
+   - `file:<path>` → Read file directly
+   - Auto-detected commit → Use diff from `git log -1 --patch`
+
+3. **Understand scope** — Identify files, intent, and Android components (Activities, Fragments, ViewModels, Composables).
 
 3. **Read surrounding code** — Don't review in isolation. Read changed file sections with context:
    - **For small files (<200 lines)**: Read entire file
