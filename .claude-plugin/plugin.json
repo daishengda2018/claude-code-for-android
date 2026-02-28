@@ -1,12 +1,28 @@
 {
   "name": "claude-code-for-android",
   "version": "3.0.0",
-  "description": "Android code review toolkit v3.0.0 - Fixed plugin discovery and command loading",
-  "author": "daishengda2018",
-  "license": "Apache-2.0",
-  "repository": "https://github.com/daishengda2018/claude-code-for-android.git",
+  "description": "Android code review toolkit v3.0.0 - Automated code review for Kotlin/Java with lifecycle, coroutine, security, and performance checks",
+  "author": {
+    "name": "daishengda2018",
+    "url": "https://github.com/daishengda2018"
+  },
   "homepage": "https://github.com/daishengda2018/claude-code-for-android",
-  "commands": "./commands",
-  "skills": "./skills",
-  "agents": "./agents"
+  "repository": "https://github.com/daishengda2018/claude-code-for-android",
+  "license": "Apache-2.0",
+  "keywords": [
+    "android",
+    "kotlin",
+    "java",
+    "code-review",
+    "security",
+    "performance",
+    "quality",
+    "lifecycle",
+    "coroutines",
+    "jetpack"
+  ],
+  "skills": ["./skills/"],
+  "agents": [
+    "./agents/android-code-reviewer.md"
+  ]
 }
