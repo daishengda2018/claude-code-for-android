@@ -3,7 +3,7 @@
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Claude Code Plugin](https://img.shields.io/badge/Claude%20Code-Plugin-blue.svg)](https://claude.ai/claude-code)
 
-English | **[简体中文](README_ZH.md)**
+English | [简体中文](docs/translations/README_ZH.md)
 
 Automated Android code review for Kotlin/Java code — quality, security, and performance checks based on Google's official Android best practices.
 
@@ -231,10 +231,12 @@ This plugin enforces compliance with:
 Want to contribute or understand the internal implementation? Check out:
 
 - 📖 [User Guide](docs/USER_GUIDE.md) - Complete usage guide with test suite
-- 📊 [Test Results](docs/test-results/2026-02-28-validation-results.md) - Validation results
 - 📖 [Development Guide](DEVELOPMENT.md) - Plugin development guide
-- 🎨 [Design Document](docs/plans/2026-02-27-android-test-project-integration-design.md) - Architecture design
+- 🎨 [Architecture Design](docs/2026-02-27-android-test-project-integration-design.md) - System architecture
 - 🔄 [Development Workflow](docs/workflows/development-cycle.md) - Development cycle
+- 📊 [Plugin Structure](docs/PLUGIN_STRUCTURE.md) - Internal structure
+- 📋 [Reference Documentation](docs/reference/) - Detection patterns and rules
+- 📄 [Verification Reports](docs/reports/) - Test results and validation
 
 ## Test Suite Status
 
@@ -252,7 +254,11 @@ Run tests: `./scripts/batch-validate-reviews.sh`
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+- [Contributing Standards](CONTRIBUTING_STANDARDS.md) - Coding and documentation standards
+- [Code of Conduct](CODE_OF_CONDUCT.md) - Community guidelines
+- [Changelog](CHANGELOG.md) - Version history
 
 ## License
 
