@@ -1,7 +1,7 @@
 {
   "name": "claude-code-for-android",
-  "version": "3.0.0",
-  "description": "Android code review toolkit v3.0.0 - Automated code review for Kotlin/Java with lifecycle, coroutine, security, and performance checks",
+  "version": "3.0.1",
+  "description": "Android code review toolkit v3.0.1 - Fixed plugin manifest validation and cleaned up documentation",
   "author": {
     "name": "daishengda2018",
     "url": "https://github.com/daishengda2018"
