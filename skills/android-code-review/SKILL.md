@@ -110,7 +110,7 @@ After loading appropriate patterns, invoke `android-code-reviewer` agent with:
 The agent will:
 - Read and analyze the provided files
 - Apply the loaded detection rules
-- Filter findings by confidence (>80%)
+- Filter findings by confidence (>85%)
 - Output structured findings in the required format
 
 ## Output Format

@@ -111,22 +111,20 @@ Always skip if:
 
 ---
 
-### 5. 分层可信度阈值系统
+### 5. 统一可信度阈值优化
 
-**位置**: `agents/android-code-reviewer.md`
+**位置**: `agents/android-code-reviewer.md` + `skills/android-code-review/SKILL.md`
 
-**实现**: 将统一 80% 阈值改为分层阈值
+**实现**: 将统一 80% 阈值提高到 85%，减少误报
 
-| 规则类型 | 阈值 | 示例 |
-|---------|------|------|
-| 🔴 安全类 | 90% | Hardcoded keys, SQL injection |
-| 🟠 架构/生命周期 | 80% | Fragment lifecycle, Memory leaks |
-| 🟡 代码质量 | 70% | Long method, High complexity |
+**改动**:
+- Agent: 统一使用 85% 阈值
+- Skill: 在 Agent 编排部分明确指定 85% 阈值
 
 **理由**:
-- 安全问题误报会导致恐慌，需要高精度
-- Android 特定问题模式明确，80% 合适
-- 代码质量问题有主观性，允许更多提醒
+- 原来的 80% 阈值偏低，导致误报较多
+- 提高到 85% 可以减少噪音，同时保持合理的检出率
+- 统一阈值简化了检测逻辑，易于维护
 
 ## 预期效果
 

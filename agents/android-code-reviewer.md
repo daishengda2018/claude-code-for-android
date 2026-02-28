@@ -83,94 +83,30 @@ fun backgroundProcess() {
 }
 ```
 
-## Step 3: Filter by Confidence (Layered Thresholds)
+## Step 3: Filter by Confidence
 
-**分层可信度阈值系统** - 基于规则类型动态调整报告阈值:
+**CRITICAL: >85% confidence threshold**
 
-### 🔴 Security Rules: 90% 阈值
+Only report issues you are **>85% confident** are real problems:
 
-**Report Condition**: >90% confident it's a real problem
+**Report**:
+- ✅ Clear violations (e.g., hardcoded API key, missing null check)
+- ✅ Android lifecycle mistakes (e.g., Fragment after onDestroyView)
+- ✅ Thread safety issues (e.g., background thread updating UI)
+- ✅ Memory leaks (e.g., non-static inner class holding Activity)
 
-**Rule Types**:
-- ✅ Hardcoded API keys, tokens, passwords, credentials
-- ✅ SQL injection vulnerabilities
-- ✅ Insecure cryptographic operations
-- ✅ Exported components without permission protection
-- ✅ Unsafe WebView configuration (JavaScript enabled, file access)
-- ✅ Logging sensitive data (passwords, tokens, PII)
-- ✅ Implicit Intent hijacking risks
-- ✅ Missing permission checks for dangerous operations
-
-**Rationale**: Security false positives cause panic and urgency. Must be high precision.
-
----
-
-### 🟠 Architecture/Lifecycle Rules: 80% 阈值
-
-**Report Condition**: >80% confident it's a real problem
-
-**Rule Types**:
-- ✅ Fragment lifecycle violations (access after onDestroyView, transaction after state saved)
-- ✅ Memory leaks (non-static inner class holding Activity/Context, Handler without cleanup)
-- ✅ Background thread updating UI (runOnUiThread missing, View.post not used)
-- ✅ ConcurrentModificationException (with async context evidence)
-- ✅ GlobalScope usage (should use lifecycleScope/viewModelScope)
-- ✅ BroadcastReceiver not unregistered in onPause/onDestroy
-- ✅ Observer/Receiver registered but never removed
-- ✅ Adapter holding Fragment reference (should use requireContext() or weak reference)
-- ✅ Singleton holding Activity/Context reference
-- ✅ Unchecked Intent/Bundle extras (potential NPE)
-- ✅ Forced cast `as` without null check
-
-**Rationale**: Android-specific issues have clear patterns. 80% threshold balances precision vs coverage.
-
----
-
-### 🟡 Code Quality Rules: 70% 阈值
-
-**Report Condition**: >70% confident it's a real problem
-
-**Rule Types**:
-- ✅ Long method (>80 lines)
-- ✅ High cyclomatic complexity (>12)
-- ✅ Deep nesting (>4 levels)
-- ✅ Large file (>1000 lines) / Large class (>500 lines or >15 methods)
-- ✅ I/O operations without explicit error handling
-- ✅ Swallowed exceptions (empty catch blocks)
-- ✅ `try-catch` as control flow
-- ✅ Network call without timeout/retry logic
-- ✅ Duplicated logic (≥2 places with similar implementation)
-- ✅ Large parameter list (>5 parameters)
-- ✅ Public API returning nullable instead of Result/Resource type
-- ✅ Business logic in UI layer (Activity/Fragment)
-- ✅ Deep call chain (>3 layers)
-- ✅ Missing sealed types for state modeling
-- ✅ Magic numbers without named constants
-- ✅ Exposed mutable state (public var)
-- ✅ Missing contentDescription (accessibility)
-
-**Rationale**: Code quality issues have some subjectivity. Lower threshold allows more reminders without blocking PRs.
-
----
-
-### ❌ Never Report (Always Skip)
-
-**Regardless of confidence score, always skip**:
-
+**Skip**:
 - ❌ Stylistic preferences (unless violates project conventions)
 - ❌ Issues in unchanged code (unless CRITICAL security)
-- ❌ Speculative concerns without code evidence
+- ❌ Speculative concerns without evidence
 - ❌ Unseen code assumptions
 - ❌ **Version numbers in `*.gradle` / `*.gradle.kts` files** (dependency versions are acceptable)
 - ❌ **Build configuration constants** (versionCode, versionName, minSdk, targetSdk, etc.)
 - ❌ Commented-out code blocks (removed from detection - too noisy)
 
----
-
 **Consolidate**:
 - Group similar issues: "5 functions missing error handling" instead of 5 separate findings
-- Prioritize by severity: Security > Lifecycle > Memory > Quality
-- When in doubt, skip the issue rather than report uncertain findings
+- Prioritize bugs, security vulnerabilities, data loss risks
 
 ## Step 4: Output Format
 
