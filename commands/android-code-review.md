@@ -75,6 +75,27 @@ gh pr diff <number> --name-only
 echo "<path>"
 ```
 
+### Step 1.5: Filter Files by Type
+
+**Goal**: Skip XML layout files and non-source files to reduce noise
+
+```bash
+# Filter out XML files and empty lines
+filtered_files=$(echo "$collected_files" | grep -v '\.xml$' | grep -v '^\s*$')
+
+# Optional: Log filtering results
+original_count=$(echo "$collected_files" | grep -v '^\s*$' | wc -l | xargs)
+filtered_count=$(echo "$filtered_files" | grep -v '^\s*$' | wc -l | xargs)
+echo "🔍 Filtered files: ${original_count} → ${filtered_count}"
+```
+
+**Filter Rules**:
+- ❌ **Skip**: `*.xml` (layouts, menus, colors, drawables, etc.)
+- ❌ **Skip**: Empty lines and whitespace-only lines
+- ✅ **Keep**: `*.kt`, `*.java`, `*.gradle`, `*.gradle.kts`
+
+**Note**: XML layout files rarely contain logic errors and reviewing them generates significant noise.
+
 ### Step 2: Invoke Skill
 
 Pass collected information to skill:

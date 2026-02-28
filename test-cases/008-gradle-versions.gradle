@@ -1,0 +1,24 @@
+// Test Case 008: Gradle Version Numbers
+// Expected: Version numbers should be ALLOWED (not flagged as hardcoded)
+
+dependencies {
+    // These version numbers should NOT trigger hardcoded value warnings
+    implementation "androidx.core:core-ktx:1.12.0"
+    implementation "androidx.appcompat:appcompat:1.6.1"
+    implementation "com.google.android.material:material:1.11.0"
+    implementation "androidx.constraintlayout:constraintlayout:2.1.4"
+
+    // Test with version variables
+    def retrofitVersion = "2.9.0"
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+
+    // Build configuration constants (also allowed)
+    versionCode 1
+    versionName "1.0.0"
+    minSdk 21
+    targetSdk 34
+}
+
+// This hardcoded password SHOULD still be flagged
+// (because it's not a version number format)
+api_key = "sk-proj-xxxxx-fake-key-for-testing"

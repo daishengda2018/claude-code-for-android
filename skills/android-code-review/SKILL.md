@@ -97,7 +97,6 @@ Only apply when reviewing a change set:
 
 * Shotgun surgery (>5 files changed for one concern)
 * Divergent change (class modified for unrelated reasons)
-* Commented-out code blocks
 * Debug artifacts left in change
 
 ## Agent Orchestration
