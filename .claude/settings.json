@@ -6,11 +6,8 @@
       "Read(*)",
       "Grep(*)",
       "Glob(*)",
-      "Bash(python3:*)",
-      "Read(//Users/im_dsd/.claude/**)"
-    ],
-    "additionalDirectories": [
-      "skills/android-code-review/references"
+      "Bash(gh *)",
+      "Task(android-code-reviewer)"
     ]
   }
 }

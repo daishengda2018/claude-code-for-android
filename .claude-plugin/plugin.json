@@ -1,0 +1,12 @@
+{
+  "name": "claude-code-for-android",
+  "version": "2.1.1",
+  "description": "Android code review toolkit v2.1.1 - Smart auto-detection with token optimization",
+  "author": "daishengda2018",
+  "license": "Apache-2.0",
+  "repository": "https://github.com/daishengda2018/claude-code-for-android.git",
+  "homepage": "https://github.com/daishengda2018/claude-code-for-android",
+  "commands": "./commands",
+  "skills": "./skills",
+  "agents": "./agents"
+}

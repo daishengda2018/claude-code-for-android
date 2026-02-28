@@ -1,12 +1,8 @@
 ---
-name: android-code-review
 description: Android PR & commit review — lifecycle, coroutine, architecture & security focused
 type: command
 
-skill:
-  name: android-code-review
-  type: orchestration-layer
-  description: Android-aware review with smart scope detection and severity-based pattern loading
+skill: android-code-review
 
 parameters:
   - name: target
@@ -14,14 +10,8 @@ parameters:
     required: false
     default: "auto"
     description: "auto|commit:<commit_id>|file:<path>|pr:<pr_number>"
-    note: "auto: uncommit → last commit"
+    note: "auto: staged → unstaged → last commit"
     shorthand: "android-code-review pr:123 / file:xxx / commit:xxx"
-
-  - name: output-format
-    type: string
-    required: false
-    default: "markdown"
-    description: "markdown|json"
 
   - name: severity
     type: string
@@ -29,33 +19,70 @@ parameters:
     default: "high"
     description: "critical|high|medium|all"
     note: "Controls pattern loading scope (token optimization)"
+
+  - name: output-format
+    type: string
+    required: false
+    default: "markdown"
+    description: "markdown|json"
 ---
-Comprehensive security and quality review:
+# Android Code Review
 
-1. Detect scope:
+Comprehensive Android code review with smart scope detection and severity-based pattern loading.
 
-- auto → git diff --name-only HEAD
-- commit:`<id>` → git show --name-only --pretty=format:"" `<id>`
-- pr:`<number>` → gh pr diff `<number>` --name-only
-- file:`<path>` → review specific file
+## What This Command Does
 
-2. Load:
+1. **Auto-detect scope** — Staged changes → Unstaged changes → Last commit
+2. **Gather context** — Read code files and surrounding context
+3. **Apply patterns** — Severity-based detection rules (CRITICAL/HIGH/MEDIUM)
+4. **Filter findings** — >80% confidence threshold to reduce noise
+5. **Format output** — Structured review with severity levels and fix suggestions
 
-- Agent: Android Code Reviewer
-- Skill: Android Code Review
+## Detection Categories
 
-3. For each file:
+**CRITICAL — Production Blockers:**
 
-- Apply checklist in skill
-- Apply PR-context rules if reviewing PR
+- NullPointerException risks
+- Fragment lifecycle violations
+- Memory leaks (Handler, BroadcastReceiver, Context)
+- Security vulnerabilities (hardcoded secrets, unsafe storage)
 
-4. Generate report with:
+**HIGH — Structural Decay:**
 
-* Severity: CRITICAL, HIGH, MEDIUM, LOW
-* File location and line numbers
-* Issue description
-* Suggested fix
-* 
-5. Block commit if CRITICAL or HIGH issues found
+- Long methods (>80 lines)
+- High complexity (>12 cyclomatic)
+- Deep nesting (>4 levels)
+- Duplicated logic
+- Missing error handling
 
-Never approve code with security vulnerabilities!
+**MEDIUM — Maintainability:**
+
+- Business logic in UI layer
+- Mutable state exposure
+- Missing accessibility
+
+## Parameters
+
+- `--target`: `auto` (default) | `commit:<id>` | `file:<path>` | `pr:<number>`
+- `--severity`: `critical` | `high` (default) | `medium` | `all`
+- `--output-format`: `markdown` (default) | `json`
+
+## Usage
+
+```bash
+# Review staged changes
+/android-code-review
+
+# Review specific file
+/android-code-review --target file:app/src/main/java/Example.kt
+
+# Review with custom severity
+/android-code-review --severity critical
+
+# Review commit
+/android-code-review --target commit:abc123
+```
+
+## Security Rule
+
+**Never approve code with security vulnerabilities!** Block commit if CRITICAL or HIGH issues found.
