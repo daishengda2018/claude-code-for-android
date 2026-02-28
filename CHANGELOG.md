@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0] - 2026-02-28
+
+### Added
+- V3.0.0 plugin architecture with simplified structure
+- `.claude-plugin/plugin.json` for marketplace compatibility
+- `docs/archive/` for historical documentation
+
+### Changed
+- **BREAKING**: `agent/` → `agents/` (plural) to match standard structure
+- **BREAKING**: `.claude/plugin-manifest.json` → `.claude-plugin/plugin.json`
+- Updated `docs/README.md` for V3.0.0 structure
+- Rewrote `DEVELOPMENT.md` for V3.0.0
+
+### Removed
+- `package.json` (outdated npm configuration)
+- Duplicate documentation files:
+  - `docs/DESIGN.md`
+  - `docs/OPTIMIZATION.md`
+  - `docs/PLUGIN-ARCHITECTURE-FINAL.md`
+  - `docs/PLUGIN-STRUCTURE-CORRECT.md`
+  - `docs/Android Code Review Command.md`
+  - `docs/Android Review checklist.md`
+
+### Fixed
+- Plugin discovery issues with proper directory structure
+- Documentation now organized by V3.0.0 architecture
+
 ## [Unreleased]
 
 ### Planned
