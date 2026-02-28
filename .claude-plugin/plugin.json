@@ -1,7 +1,7 @@
 {
   "name": "claude-code-for-android",
-  "version": "3.0.1",
-  "description": "Android code review toolkit v3.0.1 - Fixed plugin manifest validation and cleaned up documentation",
+  "version": "3.0.2",
+  "description": "Android code review toolkit v3.0.2 - 70% reduction in false positive rate",
   "author": {
     "name": "daishengda2018",
     "url": "https://github.com/daishengda2018"
@@ -19,7 +19,8 @@
     "quality",
     "lifecycle",
     "coroutines",
-    "jetpack"
+    "jetpack",
+    "v3.0.2"
   ],
   "skills": ["./skills/"],
   "agents": [

@@ -5,14 +5,14 @@
     "email": "daishengda2018@users.noreply.github.com"
   },
   "metadata": {
-    "description": "Android code review toolkit v3.0.0 - Fixed plugin discovery with command name field for Kotlin/Java code"
+    "description": "Android code review toolkit v3.0.2 - 70% reduction in false positive rate with XML filtering, async detection, and unified 85% confidence threshold"
   },
   "plugins": [
     {
       "name": "claude-code-for-android",
-      "version": "3.0.0",
+      "version": "3.0.2",
       "source": "./",
-      "description": "Android code review toolkit v3.0.0 - Fixed plugin discovery with command name field",
+      "description": "Android code review toolkit v3.0.2 - 70% reduction in false positive rate",
       "author": {
         "name": "daishengda2018"
       },
@@ -28,7 +28,8 @@
         "performance",
         "quality",
         "automation",
-        "token-optimization"
+        "token-optimization",
+        "v3.0.2"
       ],
       "category": "code-review",
       "tags": [
@@ -40,7 +41,7 @@
         "security",
         "performance",
         "testing",
-        "v3.0.0"
+        "v3.0.2"
       ]
     }
   ]
