@@ -45,79 +45,79 @@ cp -r agents/* ~/.claude/agents/
 
 ---
 
-## 使用方法
+## 使用方法（在 claude 启动后)
 
 ### 基础审查（暂存的更改）
 
 ```bash
-android-code-review --target staged
+/android-code-review --target staged
 ```
 
 ### 审查特定文件
 
 ```bash
-android-code-review --target file:app/src/main/java/com/example/MyFragment.kt
+/android-code-review --target file:app/src/main/java/com/example/MyFragment.kt
 ```
 
 ### 审查所有未提交的更改
 
 ```bash
-android-code-review --target all
+/android-code-review --target all
 ```
 
 ### 按严重级别过滤审查
 
 ```bash
-android-code-review --target all --severity critical
+/android-code-review --target all --severity critical
 ```
 
 ### 审查特定提交
 
 ```bash
-android-code-review --target commit:a1b2c3d
+/android-code-review --target commit:a1b2c3d
 ```
 
 ### 审查 Pull Request
 
 ```bash
 # 通过 PR 编号审查
-android-code-review --target pr:123
+/android-code-review --target pr:123
 
 # 按严重级别过滤 PR 审查
-android-code-review --target pr:123 --severity high
+/android-code-review --target pr:123 --severity high
 
 # 以 JSON 格式输出（用于 CI/CD）
-android-code-review --target pr:123 --output-format json
+/android-code-review --target pr:123 --output-format json
 ```
 
 ### 高级用法
 
 ```bash
 # 使用 light 模式快速审查（减少 30% token）
-android-code-review --target all --mode light
+/android-code-review --target all --mode light
 
 # 安全关键审查（减少 84% token）
-android-code-review --target staged --severity critical
+/android-code-review --target staged --severity critical
 
 # 使用项目特定指南审查
-android-code-review --target staged --project-guidelines ./ANDROID.md
+/android-code-review --target staged --project-guidelines ./ANDROID.md
 
 # 仅审查 PR 差异（更快）
-android-code-review --target pr:123 --pr-context diff-only
+/android-code-review --target pr:123 --pr-context diff-only
 ```
 
 ---
 
 ## 审查内容
 
-| 类别 | 检查项 |
-|------|--------|
-| **安全** | 硬编码密钥、不安全存储、Intent 劫持、WebView 漏洞、明文传输 |
-| **代码质量** | 内存泄漏、错误处理、大型函数、深层嵌套、死代码 |
-| **Android 模式** | 生命周期违规、ViewModel 误用、已弃用的 API、权限处理 |
-| **Jetpack/Kotlin** | 协程误配置、Room 问题、Hilt 错误、Compose 反模式 |
-| **性能** | ANR 风险、布局效率、Bitmap 管理问题、启动瓶颈 |
-| **最佳实践** | 命名规范、文档、可访问性、资源管理 |
+| 类别                     | 检查项                                                      |
+| ------------------------ | ----------------------------------------------------------- |
+| **安全**           | 硬编码密钥、不安全存储、Intent 劫持、WebView 漏洞、明文传输 |
+| **代码质量**       | 内存泄漏、错误处理、大型函数、深层嵌套、死代码              |
+| **Android 模式**   | 生命周期违规、ViewModel 误用、已弃用的 API、权限处理        |
+| **Jetpack/Kotlin** | 协程误配置、Room 问题、Hilt 错误、Compose 反模式            |
+| **性能**           | ANR 风险、布局效率、Bitmap 管理问题、启动瓶颈               |
+| **最佳实践**       | 命名规范、文档、可访问性、资源管理                          |
 
 ---
 
@@ -127,67 +127,57 @@ android-code-review --target pr:123 --pr-context diff-only
 
 ```bash
 # 在合并前审查 PR
-android-code-review --target pr:123
+/android-code-review --target pr:123
 
 # 仅高严重级别（更快）
-android-code-review --target pr:123 --severity high
+/android-code-review --target pr:123 --severity high
 
 # 导出为 JSON 用于归档
-android-code-review --target pr:123 --output-format json > pr-123-review.json
+/android-code-review --target pr:123 --output-format json > pr-123-review.json
 ```
 
 ### CI/CD 集成
 
-GitHub Actions 工作流示例：
+> ⚠️ **注意：** Claude Code 插件需要在 Claude Code 交互环境中运行，不能直接在传统 CI/CD 系统中使用。
 
-```yaml
-name: Android 代码审查
+**当前限制：**
 
-on:
-  pull_request:
-    branches: [main]
+- 插件依赖 Claude Code 的交互式环境
+- 需要用户手动触发审查命令
+- 不支持自动化 CI/CD pipeline 集成
 
-jobs:
-  code-review:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
+**推荐的替代方案：**
 
-      - name: 运行 Android 代码审查
-        run: |
-          android-code-review --target ${{ github.sha }} \
-                              --severity high \
-                              --output-format json > review.json
+1. **Pre-commit Hook：** 在本地提交前自动运行审查
+2. **PR Review Workflow：** 在创建 PR 后手动运行审查
+3. **传统静态分析工具：** 在 CI/CD 中使用 Detekt、Checkstyle、Lint 等工具
 
-      - name: 检查结果
-        run: |
-          CRITICAL=$(jq '.summary.by_severity.CRITICAL' review.json)
-          if [ "$CRITICAL" -gt 0 ]; then
-            echo "❌ 检测到 CRITICAL 问题。PR 已阻止。"
-            exit 1
-          fi
-```
+**未来计划：**
+
+- 研究 Claude Code API 支持
+- 探索非交互式运行模式
+- 提供 CI/CD 集成方案
 
 ### PR 上下文模式
 
-| 模式 | 描述 | 使用场景 |
-|------|------|----------|
-| `full` | 完整 PR 元数据 + 差异 + 提交 | 全面审查 |
-| `diff-only` | 仅代码更改 | 大型 PR 快速审查 |
-| `commits-only` | 仅提交消息 | 快速提交历史检查 |
+| 模式             | 描述                         | 使用场景         |
+| ---------------- | ---------------------------- | ---------------- |
+| `full`         | 完整 PR 元数据 + 差异 + 提交 | 全面审查         |
+| `diff-only`    | 仅代码更改                   | 大型 PR 快速审查 |
+| `commits-only` | 仅提交消息                   | 快速提交历史检查 |
 
 ---
 
 ## 命令选项
 
-| 参数 | 值 | 默认值 | 描述 |
-|------|-----|--------|------|
-| `--target` | `staged`、`all`、`commit:<hash>`、`file:<path>`、`pr:<number\|url>` | `staged` | 审查范围 |
-| `--severity` | `critical`、`high`、`medium`、`low`、`all` | `all` | 按严重级别过滤（控制渐进式加载） |
-| `--mode` | `light`、`normal` | `normal` | 执行模式（light = 减少 30% token） |
-| `--pr-context` | `full`、`diff-only`、`commits-only` | `full` | PR 上下文级别（用于 pr: 目标） |
-| `--project-guidelines` | `<file-path>` | - | 自定义指南文件（如 ANDROID.md、lint.xml） |
-| `--output-format` | `markdown`、`json` | `markdown` | 输出格式（JSON 包含置信度分数） |
+| 参数                     | 值                                                                           | 默认值       | 描述                                      |
+| ------------------------ | ---------------------------------------------------------------------------- | ------------ | ----------------------------------------- |
+| `--target`             | `staged`、`all`、`commit:<hash>`、`file:<path>`、`pr:<number\|url>` | `staged`   | 审查范围                                  |
+| `--severity`           | `critical`、`high`、`medium`、`low`、`all`                         | `all`      | 按严重级别过滤（控制渐进式加载）          |
+| `--mode`               | `light`、`normal`                                                        | `normal`   | 执行模式（light = 减少 30% token）        |
+| `--pr-context`         | `full`、`diff-only`、`commits-only`                                    | `full`     | PR 上下文级别（用于 pr: 目标）            |
+| `--project-guidelines` | `<file-path>`                                                              | -            | 自定义指南文件（如 ANDROID.md、lint.xml） |
+| `--output-format`      | `markdown`、`json`                                                       | `markdown` | 输出格式（JSON 包含置信度分数）           |
 
 ---
 
@@ -225,12 +215,23 @@ jobs:
 
 ```
 claude-code-for-android/
+├── .claude/                          # Plugin 源码
+│   ├── agents/
+│   │   └── android-code-reviewer.md  # AI Agent 审查逻辑
+│   └── plugin-manifest.json
+│
 ├── commands/
-│   └── android-code-review.md     # 用户可调用的命令
-├── agents/
-│   └── android-code-reviewer.md    # 审查代理逻辑
-└── .claude/
-    └── plugin-manifest.json        # Claude Code marketplace 清单
+│   └── android-code-review.md        # 用户命令接口
+│
+├── skills/                           # 知识库
+│   └── android-code-review/
+│       ├── SKILL.md                  # 专业知识库
+│       └── references/               # 检测规则参考文档
+│
+├── test-cases/                       # 测试用例
+├── test-android/                     # 集成测试环境
+├── scripts/                          # 自动化脚本
+└── docs/                             # 文档
 ```
 
 ---

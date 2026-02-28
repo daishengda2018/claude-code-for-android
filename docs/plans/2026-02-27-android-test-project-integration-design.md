@@ -4,6 +4,8 @@
 **Author:** Brainstorming session with user
 **Status:** ✅ Approved
 
+**Last Updated:** 2026-02-28 - 更新项目结构，添加 skills/ 目录
+
 ## Overview
 
 Design a development workflow that integrates a real Android project for testing the `android-code-reviewer` plugin, with proper isolation from the user-installed version.
@@ -28,6 +30,19 @@ claude-code-for-android/              ← Git repository root
 │   ├── agents/
 │   │   └── android-code-reviewer.md  ← Modify this file
 │   └── plugin-manifest.json
+│
+├── commands/
+│   └── android-code-review.md        ← User command interface
+│
+├── skills/                           ← ⭐ NEW: Knowledge base & reference docs
+│   └── android-code-review/
+│       ├── SKILL.md                  ← Core expertise documentation
+│       └── references/               ← Detection rule references
+│           ├── sec-001-to-010-security.md
+│           ├── qual-001-to-010-quality.md
+│           ├── perf-001-to-008-performance.md
+│           ├── jetp-001-to-008-jetpack.md
+│           └── prac-001-to-008-practices.md
 │
 ├── test-android/                     ← Real Android test project (compilable)
 │   ├── build.gradle                  ← Project-level Gradle config
@@ -57,17 +72,26 @@ claude-code-for-android/              ← Git repository root
 │   └── ...
 │
 ├── scripts/
-│   ├── verify-isolation.sh           ← NEW: Check isolation
-│   ├── verify-build.sh               ← NEW: Verify project compilation
+│   ├── verify-isolation.sh           ← Check isolation
+│   ├── verify-build.sh               ← Verify project compilation
 │   ├── run-review.sh                 ← Enhanced: Auto-verify
 │   ├── verify-plugin.sh              ← Enhanced: Auto-verify
+│   ├── batch-validate-reviews.sh    ← NEW: Batch validation
+│   ├── archive-test.sh               ← Archive verified tests
 │   └── publish-plugin.sh
 │
-└── docs/
-    ├── workflows/
-    │   └── development-cycle.md      ← NEW: Workflow docs
-    └── plans/
-        └── 2026-02-27-*.md           ← This document
+├── docs/
+│   ├── design/                       ← Design documents
+│   ├── workflows/                    ← Workflow documents
+│   │   └── development-cycle.md
+│   ├── requirements/                 ← Requirement documents
+│   ├── test-results/                 ← Test results & validation
+│   └── plans/
+│       └── 2026-02-27-*.md           ← This document
+│
+└── static-analysis-config/           ← Static analysis reference configs
+    ├── detekt/
+    └── checkstyle/
 ```
 
 ### Plugin Isolation Mechanism
@@ -82,6 +106,7 @@ Claude Code Plugin Loading Priority:
 ```
 
 **Critical Constraint:**
+
 > ⚠️ `test-android/.claude/` directory must **not exist** or be **empty**
 >
 > If it exists and contains files, it will override the development plugin.
@@ -174,11 +199,13 @@ Developing a new detection rule:
 **Location:** `test-cases/`
 
 **Purpose:**
+
 - ✅ Quick verification of single detection rules
 - ✅ Batch regression testing
 - ✅ Fast iteration
 
 **Format:**
+
 ```kotlin
 // test-cases/004-async-task-leak.kt
 
@@ -205,6 +232,7 @@ class AsyncTaskLeak : Activity() {
 ```
 
 **Usage:**
+
 ```bash
 ./scripts/run-review.sh 004
 ```
@@ -216,11 +244,13 @@ class AsyncTaskLeak : Activity() {
 **Location:** `test-android/bugs/`
 
 **Purpose:**
+
 - ✅ Test with real Android project context (R files, BuildConfig)
 - ✅ Test cross-file references
 - ✅ Validate complex scenarios (multi-Activity, Fragment)
 
 **Structure:**
+
 ```
 test-android/
 └── app/src/main/java/com/test/
@@ -237,6 +267,7 @@ test-android/
 ```
 
 **Usage:**
+
 ```bash
 cd test-android/
 /android-code-review --target file:app/src/main/java/com/test/bugs/001/HandlerLeakActivity.kt
@@ -319,12 +350,14 @@ dependencies {
 **Location:** `test-android/stress/`
 
 **Purpose:**
+
 - ✅ Performance testing (50+ files)
 - ✅ Noise control validation (false positive rate)
 - ✅ Priority sorting verification
 - ✅ Confidence filtering check
 
 **Structure:**
+
 ```
 test-android/stress/
 ├── 001-small-batch/     ← 10 files, 20 issues
@@ -334,12 +367,14 @@ test-android/stress/
 ```
 
 **Acceptance Criteria:**
+
 - Performance: < 30s for 50+ files
 - Accuracy: False positive rate < 5%
 - Completeness: No missed critical issues
 - Readability: Clear report, easy to understand
 
 **Usage:**
+
 ```bash
 cd test-android/stress/003-large-batch/
 /android-code-review --target all
@@ -380,6 +415,7 @@ exit 0
 ```
 
 **Features:**
+
 - `--quiet` mode for script integration
 - Clear error messages
 - Standard exit codes
@@ -451,18 +487,21 @@ fi
 ```
 
 **Purpose:**
+
 - ✅ Validates code compiles after AI review
 - ✅ Detects plugin false positives (plugin says bug, but code compiles)
 - ✅ Reduces AI token usage (script runs Gradle, not AI)
 - ✅ Provides build verification for test cases
 
 **Usage:**
+
 ```bash
 # After AI review and code fixes
 ./scripts/verify-build.sh
 ```
 
 **Features:**
+
 - Uses Gradle wrapper if available, falls back to system gradle
 - Clear success/failure messages
 - Helps identify false positives
@@ -519,11 +558,13 @@ Script auto:
 ### Archival Strategy
 
 **When to archive:**
+
 - ✅ Test case verified (plugin detects correctly)
 - ✅ Covered by new version
 - ✅ No longer needed for daily regression
 
 **Archive location:**
+
 ```
 bugs-archive/
 ├── 2026-02/           ← By month
@@ -534,6 +575,7 @@ bugs-archive/
 ```
 
 **Archive script:**
+
 ```bash
 #!/bin/bash
 # scripts/archive-test.sh
@@ -559,11 +601,13 @@ fi
 #### **1. Plugin Isolation Failed**
 
 **Error:**
+
 ```bash
 ❌ test-android/.claude/ exists and contains files
 ```
 
 **Solution:**
+
 ```bash
 rm -rf test-android/.claude/
 ```
@@ -571,6 +615,7 @@ rm -rf test-android/.claude/
 #### **2. Test File Not Found**
 
 **Error:**
+
 ```bash
 ❌ Test case not found: 999
 Available: 001, 002, 003
@@ -581,6 +626,7 @@ Available: 001, 002, 003
 **Cause:** Claude Code cached plugin
 
 **Solution:**
+
 ```bash
 ⚠️ Important: Restart Claude Code after modifying plugin
 macOS: Cmd+Q to fully quit, then reopen
@@ -589,6 +635,7 @@ macOS: Cmd+Q to fully quit, then reopen
 #### **4. Version Conflict**
 
 **Error:**
+
 ```bash
 ❌ Tag v1.0.1 already exists
 Suggested: 1.0.2
@@ -597,6 +644,7 @@ Suggested: 1.0.2
 #### **5. Git Working Directory Dirty**
 
 **Error:**
+
 ```bash
 ❌ Working directory is not clean
 Uncommitted changes:
@@ -651,6 +699,7 @@ Publish (when all tests pass)
 ## Implementation Checklist
 
 ### Scripts
+
 - [ ] Create `scripts/verify-isolation.sh`
 - [ ] Create `scripts/verify-build.sh` ⭐️ NEW
 - [ ] Enhance `scripts/run-review.sh` with auto-verify
@@ -659,6 +708,7 @@ Publish (when all tests pass)
 - [ ] Create `scripts/README.md`
 
 ### Test Android Project (Real, Compilable)
+
 - [ ] Create `test-android/` with full project structure
 - [ ] Create `build.gradle` (project level)
 - [ ] Create `app/build.gradle` (app level)
@@ -671,11 +721,13 @@ Publish (when all tests pass)
 - [ ] Create `test-android/README.md`
 
 ### Stress Testing
+
 - [ ] Create `test-android/stress/` directories
 - [ ] Create `test-android/stress/001-small-batch/` (10 files, 20 issues)
 - [ ] Create `test-android/stress/README.md`
 
 ### Documentation
+
 - [ ] Update `DEVELOPMENT.md` with build verification workflow
 - [ ] Create `docs/workflows/development-cycle.md`
 

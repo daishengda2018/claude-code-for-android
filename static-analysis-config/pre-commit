@@ -81,7 +81,7 @@ run_detekt() {
 }
 
 # ============================================
-# 4. 执行 Checkstyle 检查
+# 3. 执行 Checkstyle 检查
 # ============================================
 run_checkstyle() {
   echo -e "${YELLOW}🔎 Running Checkstyle (Java code quality)...${NC}"
@@ -101,6 +101,51 @@ run_checkstyle() {
 }
 
 # ============================================
+# 4. 执行编译检查（新增核心功能）
+# ============================================
+run_compilation() {
+  echo -e "${YELLOW}🔨 Running compilation checks...${NC}"
+  
+  local compile_cmd=""
+  local compile_desc=""
+
+  # 根据文件改动类型构建编译命令
+  if [[ -n "$KOTLIN_FILES" && -z "$JAVA_FILES" ]]; then
+    # 仅 Kotlin 文件改动
+    compile_cmd="./gradlew compileYoyoDebugKotlin -q --parallel --daemon --offline -x test"
+    compile_desc="Kotlin compilation (compileYoyoDebugKotlin)"
+  elif [[ -z "$KOTLIN_FILES" && -n "$JAVA_FILES" ]]; then
+    # 仅 Java 文件改动
+    compile_cmd="./gradlew compileYoyoDebugJavaWithJavac -q --parallel --daemon --offline -x test"
+    compile_desc="Java compilation (compileYoyoDebugJavaWithJavac)"
+  elif [[ -n "$KOTLIN_FILES" && -n "$JAVA_FILES" ]]; then
+    # Kotlin + Java 都有改动
+    compile_cmd="./gradlew compileYoyoDebugJavaWithJavac compileYoyoDebugKotlin -q --parallel --daemon --offline -x test"
+    compile_desc="Java + Kotlin compilation"
+  else
+    # 理论上不会走到这里（前面已检查有文件改动）
+    echo -e "${GREEN}✓ No compilation needed${NC}"
+    return 0
+  fi
+
+  # 执行编译命令并处理结果
+  echo -e "${YELLOW}📝 Executing: $compile_desc${NC}"
+  $compile_cmd
+  local compile_exit_code=$?
+
+  if [ $compile_exit_code -ne 0 ]; then
+    echo -e "${RED}***********************************************${NC}"
+    echo -e "${RED}        $compile_desc failed                  ${NC}"
+    echo -e "${RED} Please fix compilation issues before committing ${NC}"
+    echo -e "${RED}***********************************************${NC}"
+    return 1
+  fi
+
+  echo -e "${GREEN}✓ $compile_desc passed${NC}"
+  return 0
+}
+
+# ============================================
 # 主流程
 # ============================================
 
@@ -111,7 +156,7 @@ if ! check_kotlin_java_files; then
   exit 0
 fi
 
-# 2. 根据文件类型选择性执行检查
+# 2. 根据文件类型选择性执行静态检查
 exit_code=0
 
 if need_detekt; then
@@ -126,9 +171,16 @@ if need_checkstyle; then
   fi
 fi
 
-# 3. 最终结果
+# 3. 静态检查全部通过后，执行编译检查（新增步骤）
 if [ $exit_code -eq 0 ]; then
-  echo -e "${GREEN}✅ All pre-commit checks passed!${NC}"
+  if ! run_compilation; then
+    exit_code=1
+  fi
+fi
+
+# 4. 最终结果
+if [ $exit_code -eq 0 ]; then
+  echo -e "${GREEN}✅ All pre-commit checks (quality + compilation) passed!${NC}"
   exit 0
 else
   exit 1

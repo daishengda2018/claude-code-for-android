@@ -9,16 +9,16 @@ import android.app.Activity
 class BadSecrets : Activity() {
 
     // CRITICAL: Hardcoded API Key
-    private const val API_KEY = "sk_live_abc123xyz789"
+    private const val API_KEY = "sk_test_TEST_KEY_DO_NOT_USE_DEMO_ONLY"
 
     // CRITICAL: Hardcoded Secret
-    private const val SECRET = "my_secret_key_12345"
+    private const val SECRET = "TEST_SECRET_FOR_DEMO_ONLY_DO_NOT_USE"
 
     // CRITICAL: Hardcoded Password
-    private const val DB_PASSWORD = "admin123"
+    private const val DB_PASSWORD = "TEST_PASSWORD_DEMO_DO_NOT_USE"
 
     // CRITICAL: Hardcoded Token
-    private const val AUTH_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+    private const val AUTH_TOKEN = "TEST.JWT.TOKEN.DEMO.DO.NOT.USE"
 
     fun connectToApi() {
         // Using hardcoded credentials

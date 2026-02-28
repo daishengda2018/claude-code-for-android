@@ -230,9 +230,25 @@ This plugin enforces compliance with:
 
 Want to contribute or understand the internal implementation? Check out:
 
+- 📖 [User Guide](docs/USER_GUIDE.md) - Complete usage guide with test suite
+- 📊 [Test Results](docs/test-results/2026-02-28-validation-results.md) - Validation results
 - 📖 [Development Guide](DEVELOPMENT.md) - Plugin development guide
 - 🎨 [Design Document](docs/plans/2026-02-27-android-test-project-integration-design.md) - Architecture design
 - 🔄 [Development Workflow](docs/workflows/development-cycle.md) - Development cycle
+
+## Test Suite Status
+
+| Component | Status | Coverage |
+|-----------|--------|----------|
+| Security (SEC-001) | ✅ Verified | Hardcoded secrets, API keys |
+| Memory (QUAL-002) | ✅ Verified | Handler leaks |
+| Memory (QUAL-003) | ✅ Verified | ViewModel coroutine leaks |
+| Memory (QUAL-004) | ✅ Verified | CoroutineScope leaks |
+| Quality (NPE) | ✅ Verified | Force unwrap, unsafe nullable |
+
+**Overall:** 100% detection accuracy on 9 test cases | 0% false positive rate
+
+Run tests: `./scripts/batch-validate-reviews.sh`
 
 ## Contributing
 
