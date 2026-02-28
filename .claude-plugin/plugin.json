@@ -1,7 +1,7 @@
 {
   "name": "claude-code-for-android",
-  "version": "3.0.2",
-  "description": "Android code review toolkit v3.0.2 - 70% reduction in false positive rate",
+  "version": "3.0.3",
+  "description": "Android code review toolkit v3.0.3 - 70% reduction in false positive rate",
   "author": {
     "name": "daishengda2018",
     "url": "https://github.com/daishengda2018"
@@ -20,7 +20,7 @@
     "lifecycle",
     "coroutines",
     "jetpack",
-    "v3.0.2"
+    "v3.0.3"
   ],
   "skills": ["./skills/"],
   "agents": [
