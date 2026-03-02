@@ -1,10 +1,13 @@
 # Core Development Principles
 
+**Last Updated**: 2026-03-02
+**Applies To**: All projects, all development
+
+---
+
 ## 🎯 Golden Rule
 
 **Simple, Simple, Simple + Complete = Professional**
-
-This principle applies to **ALL projects** and **ALL development work**.
 
 ---
 
@@ -23,15 +26,28 @@ This principle applies to **ALL projects** and **ALL development work**.
 ### Professional
 - Production-ready quality
 - Follows best practices
-- Easy to onboard
+- Easy for new users/contributors
 
 ---
 
-## 🔴 Anti-Patterns (What NOT to Do)
+## 📖 Origin Story (2026-02-28)
+
+**Realization during documentation simplification**:
+
+| Phase | Files | Size | Complete? | Rating |
+|-------|-------|------|-----------|--------|
+| Original | 31 | 450KB | ✅ 100% | Complex ❌ |
+| After deletion | 8 | 68KB | ❌ 60% | Incomplete ❌ |
+| After additions | 11 | 80KB | ✅ 95% | Professional ✅ |
+
+**Lesson**: Simplicity alone ≠ professional. Must be simple **AND** complete.
+
+---
+
+## ✅ Good vs ❌ Bad
 
 ### ❌ Simple but Incomplete
 ```javascript
-// Too simple - missing error handling
 function getUser(id) {
   return fetch(`/users/${id}`); // No error handling
 }
@@ -39,208 +55,79 @@ function getUser(id) {
 
 ### ❌ Complete but Complex
 ```javascript
-// Too complex - over-engineered
 class UserServiceFactory {
   async createUserService(config, options, metadata) {
-    const provider = this.getProvider(config.provider);
-    const strategy = this.getStrategy(options.strategy);
-    const validator = this.getValidator(metadata.validator);
-    // ... 50 more lines
+    // 50 lines of over-engineering
   }
 }
 ```
 
-### ❌ Neither Simple nor Complete
-```javascript
-// Worst of both worlds
-function getUser(id) {
-  // TODO: implement
-  return null;
-}
-```
-
----
-
-## ✅ The Sweet Spot
-
 ### ✅ Simple + Complete = Professional
-
 ```javascript
-// Simple, complete, professional
 async function getUser(id) {
   if (!id) throw new Error('ID is required');
-
   const response = await fetch(`/users/${id}`);
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
   return response.json();
 }
 ```
 
-**Why**:
-- ✅ Simple: One function, clear purpose
-- ✅ Complete: Error handling, validation
-- ✅ Professional: Production-ready
+---
+
+## 📋 Decision Checklist
+
+For every decision:
+
+- [ ] **Simple?** Beginner can understand in 5 min
+- [ ] **Complete?** Handles all necessary cases
+- [ ] **Professional?** Production-ready quality
+
+**If all ✅ → Proceed**
 
 ---
 
-## 🎯 Application Examples
+## 🚀 Apply to Everything
 
-### 1. Documentation
+### Documentation
+- Short (50 lines) + answers all questions
+- Clear examples + FAQs
 
-**❌ Bad** (Complex):
-```markdown
-# Complete Guide
-200 lines of everything including what not to use
-```
+### Code
+- Few functions + complete error handling
+- Clear names + validation
 
-**❌ Bad** (Simple but incomplete):
-```markdown
-# Quick Start
-Just run it. Good luck!
-```
+### Architecture
+- 2 layers > 3 layers
+- All necessary components present
 
-**✅ Good** (Simple + Complete):
-```markdown
-# User Guide
-1. Installation (3 commands)
-2. Usage (2 examples)
-3. Common issues (3 FAQs)
-Total: 50 lines
-```
-
-### 2. Code Structure
-
-**❌ Bad**: 31 files, 450KB docs (overwhelming)
-**❌ Bad**: 3 files, no docs (incomplete)
-**✅ Good**: 11 files, 80KB docs (minimal but complete)
-
-### 3. API Design
-
-**❌ Bad**: 20 parameters (complex)
-**❌ Bad**: 1 parameter that does everything (unclear)
-**✅ Good**: 3 required parameters, 2 optional (clear)
+### APIs
+- 3 required params + 2 optional max
+- All error cases documented
 
 ---
 
-## 📋 Decision Framework
+## 📊 Success Metrics
 
-When making decisions, ask:
+A project is successful when:
 
-1. **Is it simple?**
-   - Can a beginner understand in 5 minutes?
-   - Is the code/docs easy to read?
-   - Are there few moving parts?
-
-2. **Is it complete?**
-   - Does it solve the whole problem?
-   - Are edge cases handled?
-   - Is error handling present?
-
-3. **Is it professional?**
-   - Would this pass code review?
-   - Is it production-ready?
-   - Would experienced developers approve?
-
-### If NOT simple → Simplify
-- Remove features
-- Delete redundant code/docs
-- Consolidate similar things
-
-### If NOT complete → Add
-- Add missing features
-- Handle edge cases
-- Improve error messages
-
-### If NOT professional → Refine
-- Follow best practices
-- Improve code quality
-- Enhance user experience
+1. **New users** can start in 5 minutes
+2. **Contributors** can understand structure in 30 minutes
+3. **Maintenance** requires minimal documentation lookup
+4. **Bugs** are rare and easy to fix
 
 ---
 
-## 🚀 Implementation Strategy
-
-### Start Simple, Then Complete
+## 💡 Key Formulas
 
 ```
-Step 1: Make it work (simple)
-   ↓
-Step 2: Make it right (complete)
-   ↓
-Step 3: Make it clear (professional)
+❌ Simple - Complete = Amateur
+❌ Complex + Complete = Over-engineered
+❌ Simple + Incomplete = Half-done
+✅ Simple + Complete = Professional
 ```
-
-### Stop When...
-
-✅ **Stop** when removing more makes it incomplete
-✅ **Stop** when adding more makes it complex
-✅ **Perfect** = simple + complete
-
----
-
-## 📊 Real-World Examples
-
-### Example 1: Android Code Review Plugin
-
-**Before**:
-- 31 files, 450KB docs
-- Complex multi-layer architecture
-- Verbose documentation
-
-**After**:
-- 11 files, 80KB docs
-- 2-layer architecture
-- Concise but complete docs
-
-**Result**: Professional, maintainable, user-friendly
-
-### Example 2: API Design
-
-**Before**:
-```typescript
-function process(options: ProcessOptions): Promise<Result>
-// 50 lines of JSDoc
-// 20 configuration options
-```
-
-**After**:
-```typescript
-function process(data: string, mode: 'parse' | 'validate'): Promise<Result>
-// 5 lines of JSDoc
-// 2 parameters, clear purpose
-```
-
-**Result**: Simple, complete, professional
-
----
-
-## 🎓 Origin Story
-
-**Date**: 2026-02-28
-**Project**: claude-code-for-android
-**Context**: Documentation simplification
-
-Realized after deleting 93% of docs:
-- Simplicity alone = incomplete
-- Completeness alone = complex
-- Both together = professional
-
----
-
-## ✨ Checklist
-
-For every project decision:
-
-- [ ] Is it simple? (few parts, clear)
-- [ ] Is it complete? (handles everything needed)
-- [ ] Is it professional? (production-ready)
-- [ ] Would I approve this in code review?
-
-If all ✅ → Ship it!
 
 ---
 
 **Principle Created**: 2026-02-28
-**Applies To**: All projects, all development
-**Status**: Core development philosophy
+**Applies To**: All projects, all development, all decisions
+**Status**: Active - use daily
