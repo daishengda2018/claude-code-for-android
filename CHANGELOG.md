@@ -12,6 +12,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Statistical data visualization
 - Performance metrics analysis
 
+## [3.0.5] - 2026-03-02
+
+### Changed
+- **Simplified architecture** — Removed redundant `.claude/plugin-manifest.json`
+  - Plugin now relies on directory structure discovery (commands/, skills/, agents/)
+  - Reduces version sync burden from 3 files to 2 files
+  - Follows "Simple + Complete = Professional" principle
+
+### Removed
+- `.claude/plugin-manifest.json` — No longer needed for local development or marketplace publishing
+
+### Documentation
+- Updated CLAUDE.md to reflect 2-file version check
+- Consolidated MEMORY.md from 247 to 133 lines (46% reduction)
+- Created global instincts for development principles
+
 ## [3.0.4] - 2026-02-28
 
 ### Changed
