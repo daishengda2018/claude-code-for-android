@@ -1,21 +1,9 @@
 # V3.x Architecture
 
-**Version**: 3.0.4
-**Last Updated**: 2026-02-28
+**Version**: 3.0.6
+**Last Updated**: 2026-03-02
 
-This document provides a deep dive into the V3.x architecture of the Claude Code for Android plugin.
-
----
-
-## Table of Contents
-
-- [Overview](#overview)
-- [Architecture Evolution](#architecture-evolution)
-- [V3.x Architecture](#v3x-architecture)
-- [Component Details](#component-details)
-- [Data Flow](#data-flow)
-- [Detection Rule System](#detection-rule-system)
-- [Performance Optimizations](#performance-optimizations)
+This document describes the architecture of the Claude Code for Android plugin.
 
 ---
 
@@ -23,57 +11,25 @@ This document provides a deep dive into the V3.x architecture of the Claude Code
 
 ### Plugin Purpose
 
-The Claude Code for Android plugin provides automated code review for Android projects (Kotlin/Java), detecting:
+Automated code review for Android projects (Kotlin/Java), detecting:
 
-- **Security vulnerabilities** (hardcoded secrets, insecure storage, etc.)
-- **Code quality issues** (memory leaks, error handling, etc.)
-- **Android pattern violations** (lifecycle issues, deprecated APIs, etc.)
-- **Jetpack/Kotlin issues** (coroutine problems, Room errors, etc.)
-- **Performance bottlenecks** (ANR risks, layout inefficiencies, etc.)
-- **Best practice violations** (naming, documentation, accessibility, etc.)
+- **Security vulnerabilities** - Hardcoded secrets, insecure storage, Intent hijacking, WebView flaws
+- **Code quality issues** - Memory leaks, error handling, large functions, deep nesting
+- **Android pattern violations** - Lifecycle issues, ViewModel misuse, deprecated APIs
+- **Jetpack/Kotlin issues** - Coroutine problems, Room errors, Hilt errors, Compose anti-patterns
+- **Performance bottlenecks** - ANR risks, layout inefficiencies, bitmap mismanagement
+- **Best practice violations** - Naming conventions, documentation, accessibility
 
 ### Design Principles
 
-1. **Zero Configuration** — Smart auto-detection of code changes
-2. **Confidence-Based Filtering** — Only reports issues with >90% confidence
-3. **Token Efficiency** — Progressive pattern loading minimizes token usage
-4. **Model Agnostic** — Compatible with all Claude providers (Haiku, Sonnet, Opus)
+1. **Zero Configuration** - Smart auto-detection of code changes
+2. **Confidence-Based Filtering** - Only reports issues with >90% confidence
+3. **Token Efficiency** - Progressive pattern loading minimizes token usage
+4. **Model Agnostic** - Compatible with all Claude providers (Haiku, Sonnet, Opus)
 
 ---
 
-## Architecture Evolution
-
-### V2.x Architecture (Deprecated)
-
-```
-User Command → Command → Agent → Subagents (3 layers)
-                      ↓
-                 Code Examples (verbose)
-```
-
-**Issues**:
-- ❌ High token usage (code examples)
-- ❌ Complex 3-layer architecture
-- ❌ Unstable plugin discovery
-- ❌ No marketplace integration
-
-### V3.x Architecture (Current)
-
-```
-User Command → Command → Skill → Agent (3 layers, simplified)
-                              ↓
-                         Detection Patterns (concise)
-```
-
-**Improvements**:
-- ✅ 38-39% token reduction (pattern-based detection)
-- ✅ Simplified rule orchestration
-- ✅ Stable plugin discovery (with `name` field)
-- ✅ Proper marketplace integration
-
----
-
-## V3.x Architecture
+## Architecture
 
 ### Directory Structure
 
@@ -81,22 +37,16 @@ User Command → Command → Skill → Agent (3 layers, simplified)
 claude-code-for-android/
 ├── commands/
 │   └── android-code-review.md         # User-facing command interface
-│
 ├── agents/
 │   └── android-code-reviewer.md       # Code review execution agent
-│
 ├── skills/
 │   └── android-code-review/
 │       └── SKILL.md                   # Detection rules orchestration
-│
-├── .claude/                           # Development environment config
-│   ├── plugin-manifest.json           # Project metadata
-│   └── settings.json                  # Project settings (hooks, permissions)
-│
+├── .claude/                           # Development environment config (not published)
+│   └── settings.json                  # Project settings
 ├── .claude-plugin/                    # Marketplace metadata
-│   ├── plugin.json                    # Plugin manifest for marketplace
+│   ├── plugin.json                    # Plugin manifest
 │   └── marketplace.json               # Marketplace description
-│
 ├── test-cases/                        # Standalone test files (Tier 1)
 ├── test-android/                      # Real Android project (Tier 2)
 └── docs/                              # Documentation
@@ -109,6 +59,35 @@ claude-code-for-android/
 | **Command** | `commands/android-code-review.md` | File collection, filtering, user interface | ~1,000 |
 | **Skill** | `skills/android-code-review/SKILL.md` | Rule selection, severity filtering, agent invocation | ~500-6,000 |
 | **Agent** | `agents/android-code-reviewer.md` | Code analysis, pattern matching, confidence scoring | ~2,000-4,000 |
+
+### Execution Flow
+
+```
+User: /android-code-review --target file:Example.kt --severity high
+    ↓
+Command Layer
+  • Parse arguments
+  • Collect files
+  • Filter XML files
+  • Invoke Skill
+    ↓
+Skill Layer
+  • Load rules by severity
+  • Invoke Agent
+    ↓
+Agent Layer
+  • Read code
+  • Apply rules
+  • Score confidence
+  • Filter >90%
+  • Output findings
+    ↓
+Skill Layer
+  • Format output
+    ↓
+Command Layer
+  • Present to user
+```
 
 ---
 
@@ -133,17 +112,6 @@ claude-code-for-android/
 - **File Filtering**: Skips XML files (layouts, menus, drawables)
 - **Severity Pass-through**: Passes severity threshold to Skill
 
-**Example Flow**:
-```markdown
-User runs: /android-code-review --target file:app/src/main/java/Example.kt
-    ↓
-Command collects file: app/src/main/java/Example.kt
-    ↓
-Command filters: Checks if file is *.xml → No, include
-    ↓
-Command invokes Skill with: { files: [...], severity: "high" }
-```
-
 ### 2. Skill Layer
 
 **File**: `skills/android-code-review/SKILL.md`
@@ -161,13 +129,13 @@ Command invokes Skill with: { files: [...], severity: "high" }
 | `critical` | ~1,500 | Security only |
 | `high` | ~6,900 | Security + Quality + Architecture + Jetpack |
 | `medium` | ~8,100 | Above + Performance |
-| `all` | ~8,900 | All patterns including PR Context |
+| `all` | ~8,900 | All patterns |
 
 **Rule Categories**:
-- **CRITICAL** — Production blockers (NPE, memory leaks, security issues)
-- **HIGH** — Structural decay (long methods, deep nesting, large classes)
-- **MEDIUM** — Maintainability (business logic in UI, magic numbers)
-- **LOW** — Best practices (naming, documentation, accessibility)
+- **CRITICAL** - Production blockers (NPE, memory leaks, security issues)
+- **HIGH** - Structural decay (long methods, deep nesting, large classes)
+- **MEDIUM** - Maintainability (business logic in UI, magic numbers)
+- **LOW** - Best practices (naming, documentation, accessibility)
 
 ### 3. Agent Layer
 
@@ -188,104 +156,11 @@ Command invokes Skill with: { files: [...], severity: "high" }
 | 80-89% | ⚠️ Skip (near threshold) |
 | <80% | ❌ Skip (false positive risk) |
 
-**Output Format**:
-```markdown
-## Android Code Review Results
-
-### 🔴 CRITICAL (N issues)
-[Findings...]
-
-### 🟠 HIGH (N issues)
-[Findings...]
-
-### 🟡 MEDIUM (N issues)
-[Findings...]
-
-## Review Summary
-| Severity | Count | Status |
-| CRITICAL | N     | fail/warn/pass |
-| HIGH     | N     | fail/warn/pass |
-| MEDIUM   | N     | fail/warn/pass |
-
-**Verdict**: [APPROVED/WARNING/BLOCKED]
-```
-
----
-
-## Data Flow
-
-### Complete Execution Flow
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│ 1. USER invokes command                                         │
-│    /android-code-review --target file:Example.kt --severity high│
-└────────────────────────┬────────────────────────────────────────┘
-                         ↓
-┌─────────────────────────────────────────────────────────────────┐
-│ 2. COMMAND LAYER                                                │
-│  • Parse arguments (--target, --severity)                       │
-│  • Collect files (git diff, staged, file:)                      │
-│  • Filter out XML files                                         │
-│  • Invoke Skill with context                                    │
-└────────────────────────┬────────────────────────────────────────┘
-                         ↓
-┌─────────────────────────────────────────────────────────────────┐
-│ 3. SKILL LAYER                                                  │
-│  • Receive: { files: [...], severity: "high" }                  │
-│  • Load detection rules based on severity (HIGH → ~6,900 tokens)│
-│  • Invoke Agent with rules and context                          │
-└────────────────────────┬────────────────────────────────────────┘
-                         ↓
-┌─────────────────────────────────────────────────────────────────┐
-│ 4. AGENT LAYER                                                  │
-│  • Receive: { files, rules, context }                           │
-│  • Read code from files                                         │
-│  • Apply detection rules                                        │
-│  • Score findings by confidence                                 │
-│  • Filter by confidence (>90%)                                  │
-│  • Output structured findings                                   │
-└────────────────────────┬────────────────────────────────────────┘
-                         ↓
-┌─────────────────────────────────────────────────────────────────┐
-│ 5. SKILL LAYER (return path)                                   │
-│  • Receive agent findings                                       │
-│  • Format output structure                                      │
-│  • Return to Command                                            │
-└────────────────────────┬────────────────────────────────────────┘
-                         ↓
-┌─────────────────────────────────────────────────────────────────┐
-│ 6. COMMAND LAYER (return path)                                 │
-│  • Receive formatted findings                                   │
-│  • Present to user (markdown or JSON)                           │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-### Example: Reviewing a File
-
-**Input**:
-```bash
-/android-code-review --target file:app/src/main/java/Example.kt --severity high
-```
-
-**Flow**:
-1. **Command** collects `app/src/main/java/Example.kt`
-2. **Command** filters: File is `.kt` → Include
-3. **Command** invokes Skill with `{ files: ["Example.kt"], severity: "high" }`
-4. **Skill** loads HIGH severity rules (~6,900 tokens)
-5. **Skill** invokes Agent with `{ files, rules: [...], context: "HIGH severity" }`
-6. **Agent** reads `Example.kt` content
-7. **Agent** applies rules (e.g., "Handler without cleanup")
-8. **Agent** detects issue → Scores confidence 95%
-9. **Agent** outputs: `[{ severity: "HIGH", confidence: 95, issue: "..." }]`
-10. **Skill** formats output → Returns to Command
-11. **Command** presents markdown to user
-
 ---
 
 ## Detection Rule System
 
-### Rule Format (Embedded in SKILL.md)
+### Rule Format
 
 Detection rules are embedded directly in `SKILL.md` as structured lists:
 
@@ -328,61 +203,33 @@ Fast review, minimal token usage
 
 ## Performance Optimizations
 
-### 1. Pattern-Based Detection (V2.1.1)
+### XML File Filtering
 
-**Before** (V2.0):
-- Used verbose code examples
-- High token usage
+- Skips `*.xml` files (layouts, menus, drawables)
+- 100% noise reduction for layout files
 
-**After** (V2.1.1+):
-- Uses concise detection patterns
-- **38-39% token reduction**
+### Async Context Detection
 
-### 2. XML File Filtering (V3.0.2)
+- Only reports concurrent modifications when async context is detected
+- Reduces false positives for collection modifications during iteration
 
-**Before**:
-- Reviewed all files including XML layouts
-- High noise, wasted tokens
+### Confidence Threshold
 
-**After**:
-- Skips `*.xml` files
-- **100% noise reduction** for layout files
-
-### 3. Async Context Detection (V3.0.2)
-
-**Before**:
-- Reported all collection modifications during iteration
-- High false positive rate (~40%)
-
-**After**:
-- Only reports when async context is detected
-- **80% fewer false positives**
-
-### 4. Confidence Threshold (V3.0.3)
-
-**Before** (V3.0.2):
-- 85% confidence threshold
-- More false positives
-
-**After** (V3.0.3+):
 - 90% confidence threshold
-- **22% additional token savings** (fewer issues reported)
+- Prioritizes precision over recall
+- When in doubt, skip reporting rather than create noise
 
-### 5. Model-Agnostic Design (V3.0.4)
+### Model-Agnostic Design
 
-**Before**:
-- Hardcoded `model: sonnet` in agent
-- Limited provider compatibility
-
-**After**:
-- Removed model constraint
+- No hardcoded model constraint
 - Compatible with Haiku, Sonnet, Opus
+- User chooses provider based on cost/quality needs
 
 ---
 
 ## Token Budget Management
 
-### Token Cost Breakdown (V3.0.4)
+### Token Cost Breakdown
 
 | Component | Critical | High | Medium | All |
 |-----------|----------|------|--------|-----|
@@ -395,51 +242,37 @@ Fast review, minimal token usage
 
 ### Optimization Strategies
 
-1. **Use `--severity critical`** for fast security scans
-2. **Review specific files** instead of entire PRs
-3. **Enable XML filtering** (automatic in V3.0.2+)
-4. **Increase confidence threshold** (90% in V3.0.3+)
+1. Use `--severity critical` for fast security scans
+2. Review specific files instead of entire PRs
+3. XML filtering is automatic
+4. 90% confidence threshold reduces noise
 
 ---
 
-## Comparison: V2.x vs V3.x
+## Output Format
 
-| Aspect | V2.x | V3.x |
-|--------|------|------|
-| **Architecture** | 3 layers (complex) | 3 layers (simplified) |
-| **Rule Storage** | Separate code examples | Embedded patterns |
-| **Token Usage** | Baseline | ~55% reduction |
-| **Confidence Threshold** | 80% | 90% |
-| **Plugin Discovery** | Unstable | Fixed (`name` field) |
-| **Marketplace Support** | No | Yes (`plugin.json`) |
-| **XML Filtering** | No | Yes |
-| **Async Detection** | No | Yes |
-| **Model Compatibility** | Sonnet only | All providers |
+```markdown
+## Android Code Review Results
 
----
+### 🔴 CRITICAL (N issues)
+[Findings...]
 
-## Future Architecture Plans
+### 🟠 HIGH (N issues)
+[Findings...]
 
-### Reserved Permissions
+### 🟡 MEDIUM (N issues)
+[Findings...]
 
-The plugin includes `python3:*` permission in `.claude/settings.json` for future features:
+## Review Summary
+| Severity | Count | Status |
+| CRITICAL | N     | fail/warn/pass |
+| HIGH     | N     | fail/warn/pass |
+| MEDIUM   | N     | fail/warn/pass |
 
-- **Automated test report generation** — Parse test results and generate summary reports
-- **Statistical data visualization** — Create charts from code quality metrics
-- **Performance metrics analysis** — Analyze token usage and performance patterns
-
-**Current Status**: Reserved but not actively used.
+**Verdict**: [APPROVED/WARNING/BLOCKED]
+```
 
 ---
 
-## Related Documentation
-
-- [Migration Guide](MIGRATION.md) — V2.x → V3.x migration details
-- [Token Optimization](TOKEN-OPTIMIZATION.md) — Performance optimization details
-- [Development Guide](../DEVELOPMENT.md) — Plugin development guide
-- [User Guide](guides/USER_GUIDE.md) — Complete usage guide
-
----
-
-**Last Updated**: 2026-02-28
+**Last Updated**: 2026-03-02
 **Maintained By**: @daishengda2018

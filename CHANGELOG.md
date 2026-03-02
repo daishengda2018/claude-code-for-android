@@ -12,6 +12,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Statistical data visualization
 - Performance metrics analysis
 
+## [3.0.6] - 2026-03-02
+
+### Changed
+- **Simplified documentation** — Removed all v2.x references from CLAUDE.md and docs/ARCHITECTURE.md
+  - Documentation now focuses solely on v3.x architecture
+  - Cleaner, more focused project documentation
+
+### Fixed
+- Version consistency in `plugin.json` keywords (was v3.0.4, now v3.0.6)
+
 ## [3.0.5] - 2026-03-02
 
 ### Changed

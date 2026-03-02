@@ -1,7 +1,7 @@
 {
   "name": "claude-code-for-android",
-  "version": "3.0.5",
-  "description": "Android code review toolkit v3.0.5 - Simplified architecture, removed redundant plugin-manifest.json",
+  "version": "3.0.6",
+  "description": "Android code review toolkit v3.0.6 - Simplified documentation, removed v2.x references",
   "author": {
     "name": "daishengda2018",
     "url": "https://github.com/daishengda2018"
@@ -20,7 +20,7 @@
     "lifecycle",
     "coroutines",
     "jetpack",
-    "v3.0.4"
+    "v3.0.6"
   ],
   "skills": ["./skills/"],
   "agents": [

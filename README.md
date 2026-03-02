@@ -123,7 +123,7 @@ android-code-review --output-format json > review.json
 
 ---
 
-### Token Cost by Severity(V3.0.5)
+### Token Cost by Severity (V3.0.6)
 
 | Severity     | Patterns Loaded                   | Token Cost | Use Case             |
 | ------------ | --------------------------------- | ---------- | -------------------- |
@@ -220,6 +220,7 @@ Fix: Use Application Context and clean up Handler in onDestroy().
 
 | Version          | Date       | Highlights                                                        |
 | ---------------- | ---------- | ----------------------------------------------------------------- |
+| **v3.0.6** | 2026-03-02 | Simplified documentation — removed v2.x references                 |
 | **v3.0.5** | 2026-03-02 | Simplified architecture — removed redundant plugin-manifest.json |
 | **v3.0.4** | 2026-02-28 | Removed hardcoded model, all providers compatible                 |
 | **v3.0.3** | 2026-02-28 | Confidence → 90%, 22% token optimization                         |
