@@ -45,10 +45,17 @@ Claude Code loads plugins in this priority order:
 2. Git root: `.claude/` ← Your development version
 3. User-level: `~/.claude/` (marketplace-installed)
 
-**Always verify isolation before testing:**
+**Verify isolation manually:**
 
 ```bash
-./scripts/verify-isolation.sh
+# Check if test-android/.claude exists
+ls test-android/.claude/ 2>/dev/null && echo "❌ Isolation broken!" || echo "✅ Isolation OK"
+```
+
+**Remove if exists:**
+
+```bash
+rm -rf test-android/.claude
 ```
 
 ### Version Consistency (Before Release)
@@ -61,39 +68,94 @@ grep -h '"version"' .claude/plugin-manifest.json .claude-plugin/plugin.json .cla
 
 All three files should display the same version number (e.g., `"3.0.4"`).
 
-See [RELEASE_CHECKLIST.md](./docs/RELEASE_CHECKLIST.md) for complete release procedure.
+See [RELEASE_CHECKLIST.md](docs/RELEASE_CHECKLIST.md) for complete release procedure.
+
+## Release Process
+
+### Quick Release Steps
+
+1. **Update version numbers:**
+   ```bash
+   # Update all three files with same version
+   .claude/plugin-manifest.json
+   .claude-plugin/plugin.json
+   .claude-plugin/marketplace.json
+   ```
+
+2. **Update CHANGELOG.md** with version changes
+
+3. **Commit changes:**
+   ```bash
+   git add .
+   git commit -m "chore: release v3.0.5"
+   ```
+
+4. **Create and push tag:**
+   ```bash
+   git tag -a v3.0.5 -m "Release v3.0.5"
+   git push origin main
+   git push origin v3.0.5
+   ```
+
+5. **Create GitHub Release:**
+   ```bash
+   gh release create v3.0.5 --notes-file CHANGELOG.md
+   ```
+
+**Detailed checklist:** See [RELEASE_CHECKLIST.md](docs/RELEASE_CHECKLIST.md)
 
 ## Development Workflow
+
+## Development Workflow
+
+### Common Commands
+
+**Run Android Code Review:**
+
+```bash
+# Auto-detection (staged → unstaged → last commit)
+/android-code-review
+
+# Review specific file
+/android-code-review --target file:test-cases/001-security-hardcoded-secrets.kt
+
+# Review with severity filter
+/android-code-review --severity critical  # Security only (fastest)
+/android-code-review --severity high      # Default (security + quality + architecture)
+/android-code-review --severity medium    # + Performance
+/android-code-review --severity all       # All patterns
+
+# Review PR
+/android-code-review --target pr:123
+```
 
 ### Quick Start
 
 1. **Write Test Case**
 
    ```kotlin
-   // test-cases/004-my-test.kt
+   // test-cases/012-new-test.kt
    // Expected Detection: HIGH
    class BadExample {
        private val leak = Handler()  // Missing cleanup
    }
    ```
+
 2. **Run AI Review**
 
+   ```bash
+   /android-code-review --target file:test-cases/012-new-test.kt
    ```
-   /android-code-review --target file:test-cases/004-my-test.kt
-   ```
+
 3. **Modify Detection Rules**
 
    - Edit `skills/android-code-review/SKILL.md` to add/modify detection patterns
    - **⚠️ Restart Claude Code after changes**
-4. **Verify in Real Project**
 
-   ```bash
-   cd test-android/
-   # Write buggy code in app/src/main/java/com/test/bugs/
-   /android-code-review --target file:app/src/main/java/com/test/bugs/...
-   cd ../
-   ./scripts/verify-build.sh  # Verify code compiles
-   ```
+4. **Verify Detection Works**
+
+   - Confirm issue is detected with expected severity
+   - Test with `test-cases/` (Tier 1) or `test-android/` (Tier 2)
 
 ## Testing System
 
@@ -109,7 +171,8 @@ See [RELEASE_CHECKLIST.md](./docs/RELEASE_CHECKLIST.md) for complete release pro
 - **Purpose:** Test in real project environment with actual Gradle build
 - **Build Verification:**
   ```bash
-  ./scripts/verify-build.sh
+  cd test-android/
+  ./gradlew assembleDebug
   ```
 
   - Exit code `0` = Build SUCCESS (plugin may have false positive)
@@ -166,10 +229,10 @@ claude-code-for-android/
 ├── test-cases/                        # Standalone test files (Tier 1)
 ├── test-android/                      # Real Android project (Tier 2)
 │   └── .claude/                       # ⚠️ MUST BE EMPTY for plugin isolation
-└── scripts/                           # Automation tools
-    ├── verify-isolation.sh
-    ├── verify-build.sh
-    └── publish-plugin.sh
+└── docs/                              # Documentation
+    ├── ARCHITECTURE.md                # V3.x architecture details
+    ├── RELEASE_CHECKLIST.md           # Release checklist
+    └── PLUGIN_STRUCTURE.md            # Plugin structure guide
 ```
 
 ## Detection System
@@ -222,9 +285,10 @@ These configs serve as reference for what the plugin should detect.
 2. **Confidence Threshold:** Only report issues >90% confidence (reduce noise)
 3. **Restart Required:** Plugin changes require restarting Claude Code
 4. **Real Project:** `test-android/` is a compilable Android project (not lightweight mock)
-5. **Build Verification:** Always run `verify-build.sh` after AI suggests fixes
-6. **Plugin Isolation:** `verify-isolation.sh` auto-runs before review scripts
+5. **Build Verification:** Always verify code compiles after AI suggests fixes
+6. **Plugin Isolation:** Ensure `test-android/.claude/` doesn't exist before testing
 7. **Token Efficiency:** Use appropriate severity level to minimize token usage
+8. **Version Consistency:** Before release, ensure all version files match (plugin-manifest.json, plugin.json, marketplace.json)
 
 ## Reserved Permissions
 
