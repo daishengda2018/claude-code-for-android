@@ -63,10 +63,10 @@ rm -rf test-android/.claude
 **⚠️ MANDATORY**: All version files must have consistent version numbers before release:
 
 ```bash
-grep -h '"version"' .claude/plugin-manifest.json .claude-plugin/plugin.json .claude-plugin/marketplace.json
+grep -h '"version"' .claude-plugin/plugin.json .claude-plugin/marketplace.json
 ```
 
-All three files should display the same version number (e.g., `"3.0.4"`).
+Both files should display the same version number (e.g., `"3.0.5"`).
 
 See [RELEASE_CHECKLIST.md](docs/RELEASE_CHECKLIST.md) for complete release procedure.
 
@@ -76,8 +76,7 @@ See [RELEASE_CHECKLIST.md](docs/RELEASE_CHECKLIST.md) for complete release proce
 
 1. **Update version numbers:**
    ```bash
-   # Update all three files with same version
-   .claude/plugin-manifest.json
+   # Update both files with same version
    .claude-plugin/plugin.json
    .claude-plugin/marketplace.json
    ```
@@ -221,7 +220,6 @@ claude-code-for-android/
 │   └── android-code-review/
 │       └── SKILL.md                   # Detection rules orchestration
 ├── .claude/                           # Development config
-│   ├── plugin-manifest.json           # Project metadata
 │   └── settings.json                  # Project settings
 ├── .claude-plugin/                    # Marketplace metadata
 │   ├── plugin.json                    # Plugin manifest
@@ -288,7 +286,7 @@ These configs serve as reference for what the plugin should detect.
 5. **Build Verification:** Always verify code compiles after AI suggests fixes
 6. **Plugin Isolation:** Ensure `test-android/.claude/` doesn't exist before testing
 7. **Token Efficiency:** Use appropriate severity level to minimize token usage
-8. **Version Consistency:** Before release, ensure all version files match (plugin-manifest.json, plugin.json, marketplace.json)
+8. **Version Consistency:** Before release, ensure all version files match (plugin.json, marketplace.json)
 
 ## Reserved Permissions
 
