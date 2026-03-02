@@ -12,6 +12,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Statistical data visualization
 - Performance metrics analysis
 
+## [3.0.4] - 2026-02-28
+
+### Changed
+- **Removed hardcoded model** — Agent now compatible with all Claude providers (Haiku, Sonnet, Opus)
+  - Removed `model: sonnet` from `agents/android-code-reviewer.md`
+  - Plugin now works with user's default model or specified model
+
+### Documentation
+- Updated marketplace descriptions to reflect new provider compatibility
+
+## [3.0.3] - 2026-02-28
+
+### Changed
+- **Fixed severity default value** — Properly defaults to `high` when not specified
+- **Raised confidence threshold** — Increased from 85% to 90% for fewer false positives
+- **Token optimization** — 22% savings when using default settings
+
 ## [3.0.2] - 2025-02-28
 
 ### Added
