@@ -1,0 +1,44 @@
+{
+  "skill_name": "android-code-review",
+  "evals": [
+    {
+      "id": 1,
+      "name": "memory-leak-detection",
+      "prompt": "Review this Android Kotlin code for memory leaks and other critical issues",
+      "expected_output": "Should detect the static Activity reference as a CRITICAL memory leak, Handler leak as CRITICAL, and provide specific recommendations with code examples showing ❌ wrong vs ✅ correct patterns.",
+      "files": [
+        {
+          "path": "app/src/main/java/com/example/MyManager.kt",
+          "content": "package com.example\n\nimport android.app.Activity\nimport android.os.Handler\nimport android.os.Looper\n\nclass MyManager {\n    \n    companion object {\n        private var currentActivity: Activity? = null\n        \n        fun setActivity(activity: Activity) {\n            currentActivity = activity\n        }\n        \n        fun getActivity(): Activity? = currentActivity\n    }\n    \n    private val handler = Handler(Looper.getMainLooper())\n    \n    fun scheduleDelayedTask() {\n        handler.postDelayed({\n            currentActivity?.runOnUiThread {\n                println(\"Task completed\")\n            }\n        }, 5000)\n    }\n}"
+        }
+      ],
+      "assertions": []
+    },
+    {
+      "id": 2,
+      "name": "thread-safety-fragment",
+      "prompt": "Review this Fragment code for thread safety issues and lifecycle problems",
+      "expected_output": "Should detect UI update from background thread (CRITICAL), missing coroutine cancellation (HIGH), and recommend using lifecycleScope with proper Main thread switching.",
+      "files": [
+        {
+          "path": "app/src/main/java/com/example/MyFragment.kt",
+          "content": "package com.example\n\nimport android.os.Bundle\nimport android.view.LayoutInflater\nimport android.view.View\nimport android.view.ViewGroup\nimport android.widget.Button\nimport android.widget.TextView\nimport androidx.fragment.app.Fragment\nimport kotlinx.coroutines.*\n\nclass MyFragment : Fragment() {\n    \n    private var textView: TextView? = null\n    private var resultTextView: TextView? = null\n    private val scope = CoroutineScope(Dispatchers.IO)\n    \n    override fun onCreateView(\n        inflater: LayoutInflater,\n        container: ViewGroup?,\n        savedInstanceState: Bundle?\n    ): View? {\n        val view = inflater.inflate(R.layout.fragment_my, container, false)\n        textView = view.findViewById(R.id.textView)\n        resultTextView = view.findViewById(R.id.resultTextView)\n        \n        view.findViewById<Button>(R.id.fetchButton).setOnClickListener {\n            fetchData()\n        }\n        \n        return view\n    }\n    \n    private fun fetchData() {\n        scope.launch {\n            delay(2000)\n            val result = \"Data loaded\"\n            resultTextView?.text = result\n        }\n    }\n    \n    override fun onDestroyView() {\n        super.onDestroyView()\n    }\n}"
+        }
+      ],
+      "assertions": []
+    },
+    {
+      "id": 3,
+      "name": "security-hardcoded-secrets",
+      "prompt": "Review this Android code for security vulnerabilities and hardcoded secrets",
+      "expected_output": "Should detect hardcoded API key (CRITICAL), logging sensitive data like passwords (CRITICAL), API key in URL (CRITICAL), and excessive HTTP logging (HIGH). All with specific remediation steps.",
+      "files": [
+        {
+          "path": "app/src/main/java/com/example/NetworkClient.kt",
+          "content": "package com.example\n\nimport android.util.Log\nimport okhttp3.OkHttpClient\nimport okhttp3.Request\nimport okhttp3.logging.HttpLoggingInterceptor\n\nclass NetworkClient {\n    \n    companion object {\n        private const val API_KEY = \"sk-proj-abc123def456xyz789\"\n        private const val BASE_URL = \"https://api.example.com\"\n    }\n    \n    private val client = OkHttpClient.Builder()\n        .addInterceptor(HttpLoggingInterceptor().apply {\n            level = HttpLoggingInterceptor.Level.BODY\n        })\n        .build()\n    \n    fun makeRequest(userId: String, password: String) {\n        Log.d(\"NetworkClient\", \"Making request for user: $userId with password: $password\")\n        \n        val request = Request.Builder()\n            .url(\"$BASE_URL/users/$userId?key=$API_KEY\")\n            .build()\n        \n        client.newCall(request).execute().use { response ->\n            Log.d(\"NetworkClient\", \"Response: ${response.body?.string()}\")\n        }\n    }\n}"
+        }
+      ],
+      "assertions": []
+    }
+  ]
+}
