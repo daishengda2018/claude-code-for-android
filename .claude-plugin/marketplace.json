@@ -5,14 +5,14 @@
     "email": "daishengda2018@users.noreply.github.com"
   },
   "metadata": {
-    "description": "Android code review toolkit v3.1.0 - Enhanced release validation and code review improvements"
+    "description": "Android code review toolkit v3.1.1 - Refactored architecture with clear responsibility separation"
   },
   "plugins": [
     {
       "name": "claude-code-for-android",
-      "version": "3.1.0",
+      "version": "3.1.1",
       "source": "./",
-      "description": "Android code review toolkit v3.1.0 - Enhanced release validation and code review improvements",
+      "description": "Android code review toolkit v3.1.1 - Refactored architecture with clear responsibility separation",
       "author": {
         "name": "daishengda2018"
       },
@@ -29,7 +29,7 @@
         "quality",
         "automation",
         "token-optimization",
-        "v3.1.0"
+        "v3.1.1"
       ],
       "category": "code-review",
       "tags": [
@@ -41,7 +41,7 @@
         "security",
         "performance",
         "testing",
-        "v3.1.0"
+        "v3.1.1"
       ]
     }
   ]

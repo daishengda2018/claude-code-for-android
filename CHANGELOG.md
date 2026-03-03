@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.1.1] - 2026-03-03
+
+### Changed
+- **Refactored architecture** — Clear responsibility separation between Command, Skill, and Agent layers
+  - Command: File collection, filtering, and severity control
+  - Skill: Rule selection, validation, and test case management
+  - Agent: Analysis, detection patterns, and confidence scoring
+  - Simplified code with 278 lines removed, 419 lines improved
+
+### Added
+- **Fully automated release-checklist skill** — Complete end-to-end release validation
+  - 7-section automated validation: Structure, Compatibility, Version, Git, Tags, Release, Post-Release
+  - Generates structured validation reports
+  - Detects BLOCKER issues before production
+
+### Documentation
+- Updated version references in plugin configuration files
+- Fixed v3.1.0 changelog entries
+
 ## [3.1.0] - 2026-03-03
 
 ### Changed
