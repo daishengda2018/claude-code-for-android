@@ -11,23 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **Version upgrade** — Bumped version to 3.1.0
-- **Enhanced release validation** — Improved automated release checklist
-- **Code review improvements** — Continued refinement of detection patterns
+- Enhanced release validation with automated checklist
+- Continued refinement of code review detection patterns
 
 ### Documentation
 - Updated version references in plugin configuration files
 - Maintained compatibility with existing workflows
-
-### Added
-- **release-checklist skill** — Automated pre-release validation checklist
-  - Verifies plugin structure (plugin.json, marketplace.json, SKILL.md files)
-  - Checks runtime compatibility (absolute paths, .claude/ directory)
-  - Validates version integrity (CHANGELOG.md, README.md)
-  - Git sync validation (working tree clean, branch consistency)
-  - Tag verification (remote and local)
-  - Generates detailed validation reports with actionable recommendations
-
-### Planned
 - Automated test report generation
 - Statistical data visualization
 - Performance metrics analysis
