@@ -1,10 +1,10 @@
 ---
 name: android-code-review
-description: Android code review rules — severity-based pattern loading and agent orchestration
+description: Use when reviewing Android code, mentioning "review android" or "review Kotlin/Java", or analyzing files in an Android project (contains build.gradle, AndroidManifest.xml, or Activity/Fragment classes)
 ---
 # Android Code Review Skill
 
-This skill provides Android code review patterns and orchestrates the agent based on severity level.
+This skill provides automated Android code review with severity-based pattern filtering and confidence scoring.
 
 ## When This Skill is Invoked
 

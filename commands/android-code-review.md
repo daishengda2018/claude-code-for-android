@@ -90,9 +90,10 @@ echo "🔍 Filtered files: ${original_count} → ${filtered_count}"
 ```
 
 **Filter Rules**:
-- ❌ **Skip**: `*.xml` (layouts, menus, colors, drawables, etc.)
-- ❌ **Skip**: Empty lines and whitespace-only lines
-- ✅ **Keep**: `*.kt`, `*.java`, `*.gradle`, `*.gradle.kts`
+
+- **Skip**: `*.xml` (layouts, menus, colors, drawables, etc.)
+- **Skip**: Empty lines and whitespace-only lines
+- **Keep**: `*.kt`, `*.java`, `*.gradle`, `*.gradle.kts`
 
 **Note**: XML layout files rarely contain logic errors and reviewing them generates significant noise.
 
