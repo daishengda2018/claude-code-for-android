@@ -1,7 +1,7 @@
 {
   "name": "claude-code-for-android",
-  "version": "3.0.6",
-  "description": "Android code review toolkit v3.0.6 - Simplified documentation, removed v2.x references",
+  "version": "3.0.7",
+  "description": "Android code review toolkit v3.0.7 - Add release-checklist skill for automated pre-release validation",
   "author": {
     "name": "daishengda2018",
     "url": "https://github.com/daishengda2018"

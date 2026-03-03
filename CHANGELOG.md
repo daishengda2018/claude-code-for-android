@@ -7,10 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **release-checklist skill** — Automated pre-release validation checklist
+  - Verifies plugin structure (plugin.json, marketplace.json, SKILL.md files)
+  - Checks runtime compatibility (absolute paths, .claude/ directory)
+  - Validates version integrity (CHANGELOG.md, README.md)
+  - Git sync validation (working tree clean, branch consistency)
+  - Tag verification (remote and local)
+  - Generates detailed validation reports with actionable recommendations
+
 ### Planned
 - Automated test report generation
 - Statistical data visualization
 - Performance metrics analysis
+
+## [3.0.7] - 2026-03-03
+
+### Added
+- **release-checklist skill** — New automated pre-release validation
+  - Execute comprehensive release checks automatically
+  - Generate structured validation reports
+  - Detect BLOCKER issues before they reach production
+  - Provide clear, actionable fix recommendations
+  - 7-section validation: Structure, Compatibility, Version, Git, Tags, Release, Post-Release
 
 ## [3.0.6] - 2026-03-02
 

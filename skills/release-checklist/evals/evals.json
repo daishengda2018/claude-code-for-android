@@ -1,0 +1,45 @@
+{
+  "skill_name": "release-checklist",
+  "evals": [
+    {
+      "id": 1,
+      "name": "normal-release-check",
+      "prompt": "我准备发布 v3.0.7 版本的插件，帮我检查是否满足所有发布要求",
+      "expected_output": "执行完整的发布检查清单，验证所有7个部分，生成验证报告显示通过或失败状态",
+      "assertions": [],
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "blocker-failure-detection",
+      "prompt": "检查当前项目是否可以发布，我刚才修改了 skills 目录下的一些文件但还没有提交",
+      "expected_output": "检测到工作区不干净（有未提交文件），这是 BLOCKER 失败，应该终止流程并报告问题",
+      "assertions": [],
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "structure-validation",
+      "prompt": "我刚在 skills 目录下创建了一个新的 skill 文件夹，但忘记添加 SKILL.md，帮我检查一下插件结构",
+      "expected_output": "检测到 skills 子目录缺少 SKILL.md 文件，报告为结构验证失败（BLOCKER）",
+      "assertions": [],
+      "files": []
+    },
+    {
+      "id": 4,
+      "name": "version-integrity-check",
+      "prompt": "我更新了 plugin.json 的版本到 v3.1.0，但还没更新 CHANGELOG.md，现在的发布状态如何？",
+      "expected_output": "检测到 CHANGELOG.md 未包含版本 v3.1.0 的更新内容，报告为版本完整性警告",
+      "assertions": [],
+      "files": []
+    },
+    {
+      "id": 5,
+      "name": "pre-tag-validation",
+      "prompt": "我准备给 v3.0.6 打标签推送，先帮我验证一下所有条件是否满足",
+      "expected_output": "执行完整检查清单，特别关注 git 同步验证和标签检查，确认可以创建和推送标签",
+      "assertions": [],
+      "files": []
+    }
+  ]
+}
