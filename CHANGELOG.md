@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.1.0] - 2026-03-03
+
+### Changed
+- **Version upgrade** — Bumped version to 3.1.0
+- **Enhanced release validation** — Improved automated release checklist
+- **Code review improvements** — Continued refinement of detection patterns
+
+### Documentation
+- Updated version references in plugin configuration files
+- Maintained compatibility with existing workflows
+
 ### Added
 - **release-checklist skill** — Automated pre-release validation checklist
   - Verifies plugin structure (plugin.json, marketplace.json, SKILL.md files)

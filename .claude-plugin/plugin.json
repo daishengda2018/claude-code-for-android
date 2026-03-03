@@ -1,7 +1,7 @@
 {
   "name": "claude-code-for-android",
-  "version": "3.0.7",
-  "description": "Android code review toolkit v3.0.7 - Add release-checklist skill for automated pre-release validation",
+  "version": "3.1.0",
+  "description": "Android code review toolkit v3.1.0 - Enhanced release validation and code review improvements",
   "author": {
     "name": "daishengda2018",
     "url": "https://github.com/daishengda2018"
@@ -20,7 +20,7 @@
     "lifecycle",
     "coroutines",
     "jetpack",
-    "v3.0.6"
+    "v3.1.0"
   ],
   "skills": ["./skills/"],
   "agents": [
