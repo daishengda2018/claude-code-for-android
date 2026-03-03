@@ -97,13 +97,20 @@ echo "🔍 Filtered files: ${original_count} → ${filtered_count}"
 
 **Note**: XML layout files rarely contain logic errors and reviewing them generates significant noise.
 
-### Step 2: Invoke Skill
+### Step 2: Orchestrate Skill and Agent
 
-Pass collected information to skill:
+This command orchestrates both the Skill and Agent:
 
-- Files to review (from Step 1)
-- Severity threshold (from `{{severity}}` parameter)
-- Output format (from `{{output-format}}` parameter)
+1. **Load Skill** (`android-code-review`):
+   - Get detection rules based on `{{severity}}` parameter
+   - Get output format template
+   - Get confidence guidelines
+
+2. **Invoke Agent** (`android-code-reviewer`):
+   - Pass files to review
+   - Pass severity threshold
+   - Pass detection rules from Skill
+   - Agent applies rules and generates report
 
 ### Step 3: Present Results
 
